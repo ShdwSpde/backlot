@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #0A0A0F;
+  --surface: #1A1525;
+  --lavender: #B8A9D4;
+  --gold: #C5A644;
+  --tropical: #2DD4BF;
+}
+
+body {
+  background-color: var(--bg);
+  color: #F5F5F5;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--lavender);
+  border-radius: 3px;
+}
