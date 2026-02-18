@@ -135,3 +135,20 @@ CROSS JOIN (VALUES
   ('Nominate your own idea', 'Submit your own ambitious project for consideration', 3)
 ) AS opt(label, description, vote_count)
 WHERE p.title = 'Next project to document?';
+
+-- Participation scoring
+CREATE TABLE participation_scores (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  wallet_address text NOT NULL UNIQUE,
+  display_name text,
+  votes_cast integer DEFAULT 0,
+  polls_participated integer DEFAULT 0,
+  chat_messages_sent integer DEFAULT 0,
+  days_holding integer DEFAULT 0,
+  cnft_receipts integer DEFAULT 0,
+  total_score integer DEFAULT 0,
+  tier text DEFAULT 'viewer',
+  updated_at timestamptz DEFAULT now()
+);
+
+ALTER PUBLICATION supabase_realtime ADD TABLE participation_scores;

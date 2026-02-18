@@ -14,6 +14,7 @@ const links = [
   { href: "/live", label: "Live", badge: true },
   { href: "/episodes", label: "Episodes" },
   { href: "/vote", label: "Vote" },
+  { href: "/leaderboard", label: "Board" },
   { href: "/backstage", label: "Backstage" },
   { href: "/about", label: "About" },
 ];
