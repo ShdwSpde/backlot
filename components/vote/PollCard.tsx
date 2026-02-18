@@ -39,6 +39,18 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
       await supabase.from("poll_options").update({ vote_count: (options.find((o) => o.id === optionId)?.vote_count || 0) + 1 }).eq("id", optionId);
       await supabase.from("vote_receipts").insert({ vote_id: vote.id, wallet_address: walletAddr, poll_title: poll.title, option_label: option?.label || "" });
       setVotedOptionId(optionId);
+
+      // Trigger cNFT mint in background
+      fetch("/api/mint-vote-receipt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          voteId: vote.id,
+          walletAddress: walletAddr,
+          pollTitle: poll.title,
+          optionLabel: option?.label || "",
+        }),
+      }).catch(console.error);
     }
     setVoting(false);
   };
