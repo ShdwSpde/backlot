@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, useMotionValue, useSpring, useInView, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import type { Episode } from "@/lib/types";
 import EpisodeCard from "@/components/episodes/EpisodeCard";
 import GatedContent from "@/components/GatedContent";
-import { Play, ExternalLink, Clock } from "lucide-react";
+import { Play, ExternalLink, Clock, Radio } from "lucide-react";
 
 const PUMP_TOKEN = "DSL6XbjPfhXjD9YYhzxo5Dv2VRt7VSeXRkTefEu5pump";
 const clipUrl = (clipId: string) =>
@@ -46,47 +46,129 @@ const pumpStreams: PumpStream[] = [
   { id: "s20", title: "24/7 Live Streaming from Jamaica — Living Art Experiment", duration: "53:44", clipId: "20260218_023836:2070942_20260218_023820", date: "Feb 18", likes: 0, episode: 20 },
 ];
 
+/* ── Animated counter ── */
+function AnimatedNumber({ value, className }: { value: number; className?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const motionVal = useMotionValue(0);
+  const spring = useSpring(motionVal, { stiffness: 80, damping: 20 });
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (isInView) motionVal.set(value);
+  }, [isInView, value, motionVal]);
+
+  useEffect(() => {
+    const unsub = spring.on("change", (v: number) => setDisplay(Math.round(v)));
+    return unsub;
+  }, [spring]);
+
+  return <span ref={ref} className={className}>{display}</span>;
+}
+
+/* ── Stream card with micro-animations ── */
 function StreamCard({ stream, index }: { stream: PumpStream; index: number }) {
+  const [hovered, setHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   return (
     <motion.a
       href={clipUrl(stream.clipId)}
       target="_blank"
       rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.05, duration: 0.4 }}
-      className="group overflow-hidden rounded-xl border border-white/5 bg-backlot-surface transition hover:border-backlot-lavender/20 hover:scale-[1.02]"
+      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ delay: index * 0.04, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+      whileHover={{ y: -4 }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      className="group relative overflow-hidden rounded-xl border border-white/5 bg-backlot-surface"
     >
-      <div className="relative aspect-video bg-backlot-bg/50">
-        <img
+      {/* Hover glow border */}
+      <AnimatePresence>
+        {hovered && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 z-10 rounded-xl pointer-events-none"
+            style={{ boxShadow: "inset 0 0 0 1px rgba(168,130,255,0.3), 0 0 20px rgba(168,130,255,0.08)" }}
+          />
+        )}
+      </AnimatePresence>
+
+      <div className="relative aspect-video bg-backlot-bg/50 overflow-hidden">
+        {/* Ken Burns slow zoom on thumbnail */}
+        <motion.img
           src={thumbUrl(stream.clipId)}
           alt={stream.title}
-          className="h-full w-full object-cover transition group-hover:brightness-110"
+          onLoad={() => setImageLoaded(true)}
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={imageLoaded ? { opacity: 1, scale: hovered ? 1.08 : 1.0 } : {}}
+          transition={{ opacity: { duration: 0.4 }, scale: { duration: 4, ease: "easeOut" } }}
+          className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition">
-          <div className="rounded-full bg-backlot-gold/90 p-3">
-            <Play size={20} className="text-backlot-bg fill-backlot-bg" />
-          </div>
-        </div>
-        <div className="absolute bottom-2 right-2 flex items-center gap-1 rounded bg-black/70 px-2 py-0.5 text-xs text-white">
-          <Clock size={10} />
+
+        {/* Play button — scale + pulse on hover */}
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: hovered ? 1 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="absolute inset-0 bg-black/30" />
+          <motion.div
+            animate={hovered ? { scale: [1, 1.15, 1] } : { scale: 1 }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            className="relative rounded-full bg-backlot-gold p-3 shadow-lg shadow-backlot-gold/30"
+          >
+            <Play size={20} className="text-backlot-bg fill-backlot-bg ml-0.5" />
+          </motion.div>
+        </motion.div>
+
+        {/* Duration badge — slides in from right */}
+        <motion.div
+          initial={{ opacity: 0, x: 10 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: index * 0.04 + 0.3, duration: 0.3 }}
+          className="absolute bottom-2 right-2 flex items-center gap-1 rounded-md bg-black/80 backdrop-blur-sm px-2 py-0.5 text-xs text-white"
+        >
+          <Clock size={10} className="opacity-60" />
           {stream.duration}
-        </div>
-        <div className="absolute top-2 left-2 rounded bg-backlot-gold/90 px-2 py-0.5 text-xs font-bold text-backlot-bg">
+        </motion.div>
+
+        {/* Episode badge — pops in with spring */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0, rotate: -12 }}
+          whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: index * 0.04 + 0.2, type: "spring", stiffness: 300, damping: 15 }}
+          className="absolute top-2 left-2 rounded-md bg-backlot-gold px-2 py-0.5 text-xs font-bold text-backlot-bg shadow-lg shadow-backlot-gold/20"
+        >
           EP {stream.episode}
-        </div>
+        </motion.div>
       </div>
+
       <div className="p-4">
-        <h3 className="text-sm font-medium text-backlot-text group-hover:text-backlot-gold transition line-clamp-2">
-          {stream.title}
+        {/* Title with underline wipe on hover */}
+        <h3 className="text-sm font-medium text-backlot-text line-clamp-2 relative">
+          <span className="transition-colors duration-200 group-hover:text-backlot-gold">
+            {stream.title}
+          </span>
         </h3>
         <div className="mt-2 flex items-center justify-between text-xs text-backlot-muted">
           <span>{stream.date}, 2026</span>
-          <span className="flex items-center gap-1">
-            <ExternalLink size={10} />
-            pump.fun
-          </span>
+          <motion.span
+            className="flex items-center gap-1"
+            animate={{ x: hovered ? 2 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ExternalLink size={10} className="transition-colors group-hover:text-backlot-lavender" />
+            <span className="transition-colors group-hover:text-backlot-lavender">pump.fun</span>
+          </motion.span>
         </div>
       </div>
     </motion.a>
@@ -110,51 +192,117 @@ export default function EpisodesPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
+      {/* ── Header ── */}
       <div className="flex items-start justify-between">
-        <div>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <h1 className="font-serif text-3xl text-backlot-text md:text-4xl">Episodes</h1>
-          <p className="mt-2 text-backlot-muted">
+          <motion.p
+            className="mt-2 text-backlot-muted"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
             The Backlot docu-series. New episodes as the experiment unfolds.
-          </p>
-        </div>
-        <a
+          </motion.p>
+        </motion.div>
+        <motion.a
           href={`https://pump.fun/coin/${PUMP_TOKEN}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden md:flex items-center gap-2 rounded-lg border border-backlot-lavender/20 bg-backlot-lavender/10 px-4 py-2 text-sm text-backlot-lavender transition hover:bg-backlot-lavender/20"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          whileHover={{ scale: 1.03, boxShadow: "0 0 20px rgba(168,130,255,0.15)" }}
+          whileTap={{ scale: 0.97 }}
+          className="hidden md:flex items-center gap-2 rounded-lg border border-backlot-lavender/20 bg-backlot-lavender/10 px-4 py-2 text-sm text-backlot-lavender transition"
         >
-          <Play size={14} className="fill-backlot-lavender" />
+          <motion.span
+            animate={{ scale: [1, 1.3, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Radio size={14} className="text-red-400" />
+          </motion.span>
           Watch Live on pump.fun
-        </a>
+        </motion.a>
       </div>
 
-      {/* Stats bar */}
-      <div className="mt-8 flex items-center gap-6 border-b border-white/5 pb-4">
+      {/* ── Stats bar with animated counters ── */}
+      <motion.div
+        className="mt-8 flex items-center gap-8 border-b border-white/5 pb-4"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
+      >
         <div className="text-center">
-          <div className="text-2xl font-bold text-backlot-gold">{pumpStreams.length}</div>
-          <div className="text-xs text-backlot-muted">Episodes</div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-backlot-text">3</div>
-          <div className="text-xs text-backlot-muted">Days Streaming</div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-backlot-tropical">24/7</div>
-          <div className="text-xs text-backlot-muted">From Jamaica</div>
-        </div>
-      </div>
-
-      {/* pump.fun Previous Streams */}
-      <div className="mt-10">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="rounded-lg bg-gradient-to-r from-backlot-gold/20 to-backlot-lavender/20 p-2">
-            <Play size={18} className="text-backlot-gold fill-backlot-gold" />
+          <div className="text-2xl font-bold text-backlot-gold">
+            <AnimatedNumber value={pumpStreams.length} />
           </div>
+          <motion.div
+            className="text-xs text-backlot-muted"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+          >
+            Episodes
+          </motion.div>
+        </div>
+        <div className="text-center">
+          <div className="text-2xl font-bold text-backlot-text">
+            <AnimatedNumber value={3} />
+          </div>
+          <motion.div
+            className="text-xs text-backlot-muted"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9 }}
+          >
+            Days Streaming
+          </motion.div>
+        </div>
+        <div className="text-center">
+          <motion.div
+            className="text-2xl font-bold text-backlot-tropical"
+            animate={{ opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          >
+            24/7
+          </motion.div>
+          <motion.div
+            className="text-xs text-backlot-muted"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.0 }}
+          >
+            From Jamaica
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* ── Previous Streams section ── */}
+      <div className="mt-10">
+        <motion.div
+          className="flex items-center gap-3 mb-6"
+          initial={{ opacity: 0, x: -10 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className="rounded-lg bg-gradient-to-r from-backlot-gold/20 to-backlot-lavender/20 p-2"
+            animate={{ rotate: [0, 3, -3, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Play size={18} className="text-backlot-gold fill-backlot-gold" />
+          </motion.div>
           <div>
             <h2 className="font-serif text-xl text-backlot-text">Previous Streams</h2>
             <p className="text-xs text-backlot-muted">Live recordings from pump.fun — click to replay</p>
           </div>
-        </div>
+        </motion.div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {pumpStreams.slice().reverse().map((stream, i) => (
             <StreamCard key={stream.id} stream={stream} index={i} />
@@ -162,9 +310,14 @@ export default function EpisodesPage() {
         </div>
       </div>
 
-      {/* Supabase episodes (if any exist) */}
+      {/* ── Supabase episodes (if any exist) ── */}
       {!loading && episodes.length > 0 && (
-        <div className="mt-16">
+        <motion.div
+          className="mt-16"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
           <h2 className="font-serif text-xl text-backlot-text mb-6">Produced Episodes</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {episodes.map((episode, i) => (
@@ -179,21 +332,32 @@ export default function EpisodesPage() {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* Mobile CTA */}
-      <div className="mt-12 md:hidden">
-        <a
+      {/* ── Mobile CTA ── */}
+      <motion.div
+        className="mt-12 md:hidden"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+      >
+        <motion.a
           href={`https://pump.fun/coin/${PUMP_TOKEN}`}
           target="_blank"
           rel="noopener noreferrer"
+          whileTap={{ scale: 0.97 }}
           className="flex items-center justify-center gap-2 rounded-lg bg-backlot-lavender/20 px-4 py-3 text-sm text-backlot-lavender transition hover:bg-backlot-lavender/30"
         >
-          <Play size={14} className="fill-backlot-lavender" />
+          <motion.span
+            animate={{ scale: [1, 1.3, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Radio size={14} className="text-red-400" />
+          </motion.span>
           Watch Live on pump.fun
-        </a>
-      </div>
+        </motion.a>
+      </motion.div>
     </div>
   );
 }
