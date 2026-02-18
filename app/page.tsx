@@ -1,7 +1,15 @@
+import Hero from "@/components/home/Hero";
+import FeaturedEpisode from "@/components/home/FeaturedEpisode";
+import MilestonePreview from "@/components/home/MilestonePreview";
+import TokenCTA from "@/components/home/TokenCTA";
+
 export default function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-backlot-bg">
-      <h1 className="font-serif text-4xl text-backlot-gold">BACKLOT</h1>
-    </div>
+    <>
+      <Hero />
+      <FeaturedEpisode />
+      <MilestonePreview />
+      <TokenCTA />
+    </>
   );
 }
