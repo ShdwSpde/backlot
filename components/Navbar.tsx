@@ -18,6 +18,7 @@ const links = [
   { href: "/backstage", label: "Backstage" },
   { href: "/about", label: "About" },
   { href: "/pitch", label: "Pitch" },
+  { href: "/tech-chat", label: "Chat" },
 ];
 
 export default function Navbar() {
