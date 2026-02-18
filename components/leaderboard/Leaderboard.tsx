@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Trophy, Vote, MessageSquare, Award, Flame } from "lucide-react";
+import { Vote, MessageSquare, Award, Flame } from "lucide-react";
 
 interface LeaderboardEntry {
   wallet_address: string;

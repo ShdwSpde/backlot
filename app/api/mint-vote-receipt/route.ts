@@ -9,7 +9,7 @@ import { supabase } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
   try {
-    const { voteId, walletAddress, pollTitle, optionLabel } = await req.json();
+    const { voteId, walletAddress, pollTitle } = await req.json();
 
     if (!voteId || !walletAddress || !pollTitle) {
       return NextResponse.json(

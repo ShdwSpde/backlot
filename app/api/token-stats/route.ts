@@ -13,7 +13,7 @@ export async function GET() {
     const priceData = await priceRes.json();
     const tokenPrice = priceData?.data?.[BACKLOT_MINT]?.price || 0;
 
-    let holders = 0;
+    const holders = 0;
     let supply = 0;
 
     try {

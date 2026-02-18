@@ -17,6 +17,7 @@ const links = [
   { href: "/leaderboard", label: "Board" },
   { href: "/backstage", label: "Backstage" },
   { href: "/about", label: "About" },
+  { href: "/pitch", label: "Pitch" },
 ];
 
 export default function Navbar() {

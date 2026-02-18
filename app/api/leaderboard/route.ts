@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     total_score: number;
   }> = {};
 
-  for (const w of wallets) {
+  for (const w of Array.from(wallets)) {
     const { count: voteCount } = await supabase
       .from("votes").select("*", { count: "exact", head: true }).eq("wallet_address", w);
 

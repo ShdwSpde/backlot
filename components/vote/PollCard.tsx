@@ -17,7 +17,7 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
   const [votedOptionId, setVotedOptionId] = useState<string | null>(null);
   const [voting, setVoting] = useState(false);
   const totalVotes = options.reduce((sum, o) => sum + o.vote_count, 0);
-  const totalWeighted = options.reduce((sum, o) => sum + ((o as any).weighted_count || o.vote_count), 0);
+  const totalWeighted = options.reduce((sum, o) => sum + ((o as PollOption & { weighted_count?: number }).weighted_count || o.vote_count), 0);
   const canVote = connected && tierRank[tier] >= tierRank[poll.tier_required as Tier];
 
   useEffect(() => {
@@ -37,7 +37,8 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
     const option = options.find((o) => o.id === optionId);
     const { data: vote, error } = await supabase.from("votes").insert({ poll_id: poll.id, option_id: optionId, wallet_address: walletAddr, tier_at_vote: tier, weight: Math.max(balance, 1) }).select().single();
     if (!error && vote) {
-      await supabase.from("poll_options").update({ vote_count: (options.find((o) => o.id === optionId)?.vote_count || 0) + 1, weighted_count: ((options.find((o) => o.id === optionId) as any)?.weighted_count || 0) + Math.max(balance, 1) }).eq("id", optionId);
+      const currentOption = options.find((o) => o.id === optionId);
+      await supabase.from("poll_options").update({ vote_count: (currentOption?.vote_count || 0) + 1, weighted_count: ((currentOption as PollOption & { weighted_count?: number })?.weighted_count || 0) + Math.max(balance, 1) }).eq("id", optionId);
       await supabase.from("vote_receipts").insert({ vote_id: vote.id, wallet_address: walletAddr, poll_title: poll.title, option_label: option?.label || "" });
       setVotedOptionId(optionId);
 
@@ -64,7 +65,7 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
       </div>
       <div className="mt-6 space-y-3">
         {options.map((option) => {
-          const pct = totalWeighted > 0 ? (((option as any).weighted_count || option.vote_count) / totalWeighted) * 100 : 0;
+          const pct = totalWeighted > 0 ? (((option as PollOption & { weighted_count?: number }).weighted_count || option.vote_count) / totalWeighted) * 100 : 0;
           const isVoted = votedOptionId === option.id;
           return (
             <button key={option.id} onClick={() => handleVote(option.id)} disabled={!canVote || !!votedOptionId || voting} className={`relative w-full overflow-hidden rounded-lg border p-3 text-left transition ${isVoted ? "border-backlot-gold/40 bg-backlot-gold/5" : votedOptionId ? "border-white/5 bg-white/5" : "border-white/10 bg-white/5 hover:border-backlot-lavender/30"}`}>
