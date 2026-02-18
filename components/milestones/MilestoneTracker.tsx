@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import type { Milestone } from "@/lib/types";
 import { Check, Zap, Clock } from "lucide-react";
+import FundMilestone from "./FundMilestone";
 
 const statusIcon = {
   completed: <Check size={16} className="text-backlot-tropical" />,
@@ -90,12 +91,17 @@ export default function MilestoneTracker({ projectName }: { projectName?: string
                   }`}>
                     {milestone.title}
                   </h3>
-                  <span className={`text-xs capitalize ${
-                    milestone.status === "completed" ? "text-backlot-tropical" :
-                    milestone.status === "active" ? "text-backlot-gold" : "text-backlot-muted/40"
-                  }`}>
-                    {milestone.status}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {milestone.status === "active" && (
+                      <FundMilestone milestoneId={milestone.id} milestoneTitle={milestone.title} />
+                    )}
+                    <span className={`text-xs capitalize ${
+                      milestone.status === "completed" ? "text-backlot-tropical" :
+                      milestone.status === "active" ? "text-backlot-gold" : "text-backlot-muted/40"
+                    }`}>
+                      {milestone.status}
+                    </span>
+                  </div>
                 </div>
 
                 {milestone.description && (

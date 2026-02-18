@@ -156,3 +156,14 @@ ALTER PUBLICATION supabase_realtime ADD TABLE participation_scores;
 -- Token-weighted voting columns
 ALTER TABLE votes ADD COLUMN weight numeric DEFAULT 1;
 ALTER TABLE poll_options ADD COLUMN weighted_count numeric DEFAULT 0;
+
+-- Milestone contributions
+CREATE TABLE milestone_contributions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  milestone_id uuid REFERENCES milestones(id) ON DELETE CASCADE,
+  wallet_address text NOT NULL,
+  amount numeric NOT NULL,
+  currency text NOT NULL DEFAULT 'SOL',
+  tx_signature text,
+  created_at timestamptz DEFAULT now()
+);
