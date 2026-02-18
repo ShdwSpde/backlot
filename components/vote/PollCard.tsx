@@ -12,11 +12,12 @@ const tierRank: Record<Tier, number> = { viewer: 0, supporter: 1, producer: 2, e
 
 export default function PollCard({ poll }: { poll: Poll & { options: PollOption[] } }) {
   const { publicKey, connected } = useWallet();
-  const { tier } = useBacklotTier();
+  const { tier, balance } = useBacklotTier();
   const [options, setOptions] = useState(poll.options || []);
   const [votedOptionId, setVotedOptionId] = useState<string | null>(null);
   const [voting, setVoting] = useState(false);
   const totalVotes = options.reduce((sum, o) => sum + o.vote_count, 0);
+  const totalWeighted = options.reduce((sum, o) => sum + ((o as any).weighted_count || o.vote_count), 0);
   const canVote = connected && tierRank[tier] >= tierRank[poll.tier_required as Tier];
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
   }, [publicKey, poll.id]);
 
   useEffect(() => {
-    const channel = supabase.channel(`poll-${poll.id}`).on("postgres_changes", { event: "UPDATE", schema: "public", table: "poll_options", filter: `poll_id=eq.${poll.id}` }, (payload) => { setOptions((prev) => prev.map((o) => (o.id === payload.new.id ? { ...o, vote_count: payload.new.vote_count } : o))); }).subscribe();
+    const channel = supabase.channel(`poll-${poll.id}`).on("postgres_changes", { event: "UPDATE", schema: "public", table: "poll_options", filter: `poll_id=eq.${poll.id}` }, (payload) => { setOptions((prev) => prev.map((o) => (o.id === payload.new.id ? { ...o, vote_count: payload.new.vote_count, weighted_count: payload.new.weighted_count } : o))); }).subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [poll.id]);
 
@@ -34,9 +35,9 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
     setVoting(true);
     const walletAddr = publicKey.toBase58();
     const option = options.find((o) => o.id === optionId);
-    const { data: vote, error } = await supabase.from("votes").insert({ poll_id: poll.id, option_id: optionId, wallet_address: walletAddr, tier_at_vote: tier }).select().single();
+    const { data: vote, error } = await supabase.from("votes").insert({ poll_id: poll.id, option_id: optionId, wallet_address: walletAddr, tier_at_vote: tier, weight: Math.max(balance, 1) }).select().single();
     if (!error && vote) {
-      await supabase.from("poll_options").update({ vote_count: (options.find((o) => o.id === optionId)?.vote_count || 0) + 1 }).eq("id", optionId);
+      await supabase.from("poll_options").update({ vote_count: (options.find((o) => o.id === optionId)?.vote_count || 0) + 1, weighted_count: ((options.find((o) => o.id === optionId) as any)?.weighted_count || 0) + Math.max(balance, 1) }).eq("id", optionId);
       await supabase.from("vote_receipts").insert({ vote_id: vote.id, wallet_address: walletAddr, poll_title: poll.title, option_label: option?.label || "" });
       setVotedOptionId(optionId);
 
@@ -63,7 +64,7 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
       </div>
       <div className="mt-6 space-y-3">
         {options.map((option) => {
-          const pct = totalVotes > 0 ? (option.vote_count / totalVotes) * 100 : 0;
+          const pct = totalWeighted > 0 ? (((option as any).weighted_count || option.vote_count) / totalWeighted) * 100 : 0;
           const isVoted = votedOptionId === option.id;
           return (
             <button key={option.id} onClick={() => handleVote(option.id)} disabled={!canVote || !!votedOptionId || voting} className={`relative w-full overflow-hidden rounded-lg border p-3 text-left transition ${isVoted ? "border-backlot-gold/40 bg-backlot-gold/5" : votedOptionId ? "border-white/5 bg-white/5" : "border-white/10 bg-white/5 hover:border-backlot-lavender/30"}`}>
@@ -77,7 +78,7 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
           );
         })}
       </div>
-      <div className="mt-4 flex items-center justify-between text-xs text-backlot-muted"><span>{totalVotes} total votes</span>{votedOptionId && <span className="text-backlot-tropical">Vote recorded — cNFT receipt pending</span>}</div>
+      <div className="mt-4 flex items-center justify-between text-xs text-backlot-muted"><span>{totalVotes} votes ({totalWeighted.toLocaleString()} weighted)</span>{votedOptionId && <span className="text-backlot-tropical">Vote recorded — cNFT receipt pending</span>}</div>
     </motion.div>
   );
 }
