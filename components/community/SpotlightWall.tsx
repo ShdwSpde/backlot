@@ -18,6 +18,7 @@ function TweetEmbed({ tweetId }: { tweetId: string }) {
     const container = ref.current;
 
     const render = () => {
+      if (!window.twttr) return;
       container.innerHTML = "";
       window.twttr.widgets.createTweet(tweetId, container, {
         theme: "dark",
