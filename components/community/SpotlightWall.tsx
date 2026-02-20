@@ -3,17 +3,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 
-declare global {
-  interface Window {
-    twttr?: {
-      ready: (fn: () => void) => void;
-      widgets: {
-        createTweet: (id: string, el: HTMLElement, opts: Record<string, unknown>) => Promise<HTMLElement | undefined>;
-      };
-    };
-  }
-}
-
 const TWEETS = [
   "2023067452368667082", // Onchain reality doc for social good
   "2024374993706975263", // Alpha incoming — Wiki page drop
