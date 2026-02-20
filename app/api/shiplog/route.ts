@@ -11,7 +11,12 @@ interface ShipEntry {
 }
 
 const SHIP_LOG: ShipEntry[] = [
-  // Feb 19, 2026 — Hackathon final push
+  // Feb 19, 2026 — Deploy night + domain + community
+  { hash: "628d72b", message: "fix: tweet embeds not rendering — race condition in Twitter widget loading", date: "2026-02-19", type: "fix", tags: ["ui", "twitter"] },
+  { hash: "a00212c", message: "feat: community spotlight — 3 embedded tweets from @Backlot876", date: "2026-02-19", type: "feat", tags: ["ui", "twitter"] },
+  { hash: "b4a63c7", message: "feat: deploy to Vercel with GitHub auto-deploy pipeline", date: "2026-02-19", type: "feat", tags: ["infra", "vercel"] },
+  { hash: "treasury", message: "feat: multisig treasury wallet connected — Squads protocol", date: "2026-02-19", type: "feat", tags: ["solana", "security", "transparency"] },
+  { hash: "domain1", message: "feat: custom domain backlotsocial.xyz goes live", date: "2026-02-19", type: "feat", tags: ["infra", "dns"] },
   { hash: "e4f2c1a", message: "feat: add transparent treasury page — on-chain holder distribution", date: "2026-02-19", type: "feat", tags: ["solana", "helius", "transparency"] },
   { hash: "b7d3e9f", message: "feat: add live activity feed — real-time votes, chat, and mints", date: "2026-02-19", type: "feat", tags: ["supabase", "realtime", "ui"] },
   { hash: "c1a8f4d", message: "feat: add build-in-public ship log", date: "2026-02-19", type: "feat", tags: ["ui", "transparency"] },
