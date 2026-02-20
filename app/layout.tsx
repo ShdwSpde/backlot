@@ -9,10 +9,22 @@ export const metadata: Metadata = {
   title: "BACKLOT — Onchain Reality Docu-Series",
   description:
     "An onchain reality docu-series using a meme token + community to fund and document ambitious creative projects in public. Starting with The Complex in Jamaica.",
+  metadataBase: new URL("https://backlotsocial.xyz"),
   openGraph: {
     title: "BACKLOT — Onchain Reality Docu-Series",
-    description: "A social experiment testing how far community can take creative ideas IRL.",
+    description: "A social experiment testing how far community can take creative ideas IRL. Hold $BACKLOT to vote, fund milestones, and shape the story.",
+    images: [{ url: "/brand/banner.jpeg", width: 1500, height: 500, alt: "BACKLOT — Reality TV. On Chain. For Good." }],
+    type: "website",
+    siteName: "BACKLOT",
+    url: "https://backlotsocial.xyz",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BACKLOT — Reality TV. On Chain. For Good.",
+    description: "An onchain reality docu-series from Jamaica. Hold $BACKLOT to vote, fund milestones, and shape the story.",
     images: ["/brand/banner.jpeg"],
+    creator: "@Backlot876",
+    site: "@Backlot876",
   },
 };
 
