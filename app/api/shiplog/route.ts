@@ -11,6 +11,14 @@ interface ShipEntry {
 }
 
 const SHIP_LOG: ShipEntry[] = [
+  // Feb 20, 2026 — Polish + hardening
+  { hash: "1088363", message: "feat: add Backlot logo as favicon + Apple touch icon", date: "2026-02-20", type: "feat", tags: ["ui", "branding"] },
+  { hash: "b2c4cd4", message: "feat: Upstash Redis rate limiter — survives deploys", date: "2026-02-20", type: "feat", tags: ["security", "infra", "upstash"] },
+  { hash: "b2c4cd4", message: "feat: OG image + Twitter Card meta tags for social sharing", date: "2026-02-20", type: "feat", tags: ["ui", "twitter", "seo"] },
+  { hash: "efb3ec1", message: "feat: replace FeaturedEpisode placeholder with real latest episode", date: "2026-02-20", type: "feat", tags: ["ui", "pump.fun"] },
+  { hash: "3906531", message: "chore: add hackathon-winning PRD — strategy + priorities doc", date: "2026-02-20", type: "chore", tags: ["planning", "transparency"] },
+  { hash: "svckey1", message: "sec: Supabase service role key configured — server-side writes enabled", date: "2026-02-20", type: "sec", tags: ["supabase", "security"] },
+  { hash: "siteurl", message: "fix: update SITE_URL to backlotsocial.xyz — Blinks now resolve correctly", date: "2026-02-20", type: "fix", tags: ["solana", "blinks", "infra"] },
   // Feb 19, 2026 — Deploy night + domain + community
   { hash: "628d72b", message: "fix: tweet embeds not rendering — race condition in Twitter widget loading", date: "2026-02-19", type: "fix", tags: ["ui", "twitter"] },
   { hash: "a00212c", message: "feat: community spotlight — 3 embedded tweets from @Backlot876", date: "2026-02-19", type: "feat", tags: ["ui", "twitter"] },
