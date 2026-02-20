@@ -31,6 +31,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#B8A9D4" />
+      </head>
       <body className="min-h-screen bg-backlot-bg font-sans text-backlot-text antialiased">
         <WalletProvider>
           <AppShell>
@@ -39,6 +43,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Footer />
           </AppShell>
         </WalletProvider>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}`,
+          }}
+        />
       </body>
     </html>
   );

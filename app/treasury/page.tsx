@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Landmark, ExternalLink, Users, TrendingUp, Coins } from "lucide-react";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 interface HolderRow {
   rank: number;
@@ -118,14 +119,19 @@ export default function TreasuryPage() {
       </motion.div>
 
       {loading ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mt-16 flex flex-col items-center gap-4"
-        >
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-backlot-gold border-t-transparent" />
-          <p className="text-backlot-muted">Loading on-chain data...</p>
-        </motion.div>
+        <div className="mt-10 space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-24 animate-pulse rounded-2xl bg-backlot-surface" />
+            ))}
+          </div>
+          <div className="h-40 animate-pulse rounded-2xl bg-backlot-surface" />
+          <div className="space-y-2">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="h-12 animate-pulse rounded-xl bg-backlot-surface" />
+            ))}
+          </div>
+        </div>
       ) : !data || data.holders.length === 0 ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -144,17 +150,17 @@ export default function TreasuryPage() {
               {
                 icon: Users,
                 label: "Total Holders",
-                value: data.totalHolders.toLocaleString(),
+                node: <AnimatedNumber value={data.totalHolders} />,
               },
               {
                 icon: TrendingUp,
                 label: "Top Holder %",
-                value: `${data.topHolderPercentage}%`,
+                node: <AnimatedNumber value={data.topHolderPercentage} suffix="%" decimals={1} />,
               },
               {
                 icon: Coins,
                 label: "Total Supply",
-                value: formatNumber(data.totalSupply),
+                node: <AnimatedNumber value={data.totalSupply} formatter={formatNumber} />,
               },
             ].map((stat, i) => (
               <motion.div
@@ -169,7 +175,7 @@ export default function TreasuryPage() {
                   <span className="text-sm">{stat.label}</span>
                 </div>
                 <p className="mt-2 font-serif text-2xl text-backlot-text">
-                  {stat.value}
+                  {stat.node}
                 </p>
               </motion.div>
             ))}

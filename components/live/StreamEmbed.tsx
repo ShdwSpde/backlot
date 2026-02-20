@@ -32,9 +32,11 @@ export default function StreamEmbed() {
         />
 
         {!loaded && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-backlot-surface">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-backlot-lavender border-t-transparent" />
-            <p className="text-sm text-backlot-muted">Loading stream...</p>
+          <div className="absolute inset-0 bg-backlot-surface">
+            <div className="h-full w-full animate-pulse bg-backlot-surface" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <p className="text-sm text-backlot-muted">Loading stream...</p>
+            </div>
           </div>
         )}
       </div>

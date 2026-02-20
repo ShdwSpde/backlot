@@ -9,6 +9,7 @@ const RATE_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "/api/token-stats": { max: 30, windowMs: 60_000 },
   "/api/treasury": { max: 20, windowMs: 60_000 },
   "/api/shiplog": { max: 20, windowMs: 60_000 },
+  "/api/card": { max: 15, windowMs: 60_000 },
 };
 
 function getClientIp(req: NextRequest): string {

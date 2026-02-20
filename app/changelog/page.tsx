@@ -11,6 +11,7 @@ import {
   GitCommit,
   ExternalLink,
 } from "lucide-react";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 interface ShipEntry {
   hash: string;
@@ -105,8 +106,17 @@ export default function ChangelogPage() {
       </motion.div>
 
       {loading ? (
-        <div className="mt-16 flex justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-backlot-gold border-t-transparent" />
+        <div className="mt-8 space-y-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-20 animate-pulse rounded-2xl bg-backlot-surface" />
+            ))}
+          </div>
+          <div className="mt-8 space-y-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-16 animate-pulse rounded-xl bg-backlot-surface" />
+            ))}
+          </div>
         </div>
       ) : data ? (
         <>
@@ -125,7 +135,9 @@ export default function ChangelogPage() {
                 transition={{ delay: 0.1 + i * 0.05 }}
                 className="rounded-2xl border border-white/5 bg-backlot-surface p-4 text-center"
               >
-                <p className={`font-serif text-2xl ${stat.color}`}>{stat.value}</p>
+                <p className={`font-serif text-2xl ${stat.color}`}>
+                  <AnimatedNumber value={stat.value} />
+                </p>
                 <p className="mt-1 text-xs text-backlot-muted">{stat.label}</p>
               </motion.div>
             ))}

@@ -11,6 +11,13 @@ interface ShipEntry {
 }
 
 const SHIP_LOG: ShipEntry[] = [
+  // Feb 20, 2026 — Polish + bells & whistles
+  { hash: "pw0001a", message: "feat: animated page transitions — smooth fade/slide between routes", date: "2026-02-20", type: "feat", tags: ["ui", "framer-motion"] },
+  { hash: "pw0001b", message: "feat: skeleton loading states — shimmering placeholders replace spinners", date: "2026-02-20", type: "feat", tags: ["ui", "ux"] },
+  { hash: "pw0001c", message: "feat: PWA install — service worker + manifest for mobile home screen", date: "2026-02-20", type: "feat", tags: ["infra", "pwa"] },
+  { hash: "pw0001d", message: "feat: confetti burst on wallet connect — canvas particle animation", date: "2026-02-20", type: "feat", tags: ["ui", "solana"] },
+  { hash: "pw0001e", message: "feat: holder rank card generator — /api/card renders personalized PNG", date: "2026-02-20", type: "feat", tags: ["solana", "helius", "og"] },
+  { hash: "pw0001f", message: "feat: scroll-triggered counter animations on all dashboards", date: "2026-02-20", type: "feat", tags: ["ui", "framer-motion"] },
   // Feb 20, 2026 — Polish + hardening
   { hash: "1088363", message: "feat: add Backlot logo as favicon + Apple touch icon", date: "2026-02-20", type: "feat", tags: ["ui", "branding"] },
   { hash: "b2c4cd4", message: "feat: Upstash Redis rate limiter — survives deploys", date: "2026-02-20", type: "feat", tags: ["security", "infra", "upstash"] },

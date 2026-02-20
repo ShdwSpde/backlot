@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, Users, Coins, BarChart3 } from "lucide-react";
+import AnimatedNumber from "@/components/AnimatedNumber";
 
 interface TokenStats {
   price: number;
@@ -14,14 +15,14 @@ interface TokenStats {
 
 function StatCard({
   label,
-  value,
   icon: Icon,
   delay,
+  children,
 }: {
   label: string;
-  value: string;
   icon: React.ElementType;
   delay: number;
+  children: React.ReactNode;
 }) {
   return (
     <motion.div
@@ -35,7 +36,7 @@ function StatCard({
         <Icon size={14} />
         <span className="text-xs uppercase tracking-wider">{label}</span>
       </div>
-      <p className="mt-2 font-serif text-2xl text-backlot-text">{value}</p>
+      <div className="mt-2 font-serif text-2xl text-backlot-text">{children}</div>
     </motion.div>
   );
 }
@@ -54,12 +55,6 @@ export default function TokenDashboard() {
     const interval = setInterval(fetchStats, 30_000);
     return () => clearInterval(interval);
   }, []);
-
-  const formatPrice = (p: number) =>
-    p < 0.01 ? `$${p.toFixed(6)}` : p < 1 ? `$${p.toFixed(4)}` : `$${p.toFixed(2)}`;
-
-  const formatMcap = (m: number) =>
-    m >= 1_000_000 ? `$${(m / 1_000_000).toFixed(1)}M` : m >= 1_000 ? `$${(m / 1_000).toFixed(1)}K` : `$${m.toFixed(0)}`;
 
   if (!stats) {
     return (
@@ -84,10 +79,39 @@ export default function TokenDashboard() {
         )}
       </div>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard label="Price" value={formatPrice(stats.price)} icon={TrendingUp} delay={0} />
-        <StatCard label="Market Cap" value={formatMcap(stats.marketCap)} icon={BarChart3} delay={0.1} />
-        <StatCard label="Holders" value={stats.holders > 0 ? stats.holders.toLocaleString() : "—"} icon={Users} delay={0.2} />
-        <StatCard label="Supply" value={stats.supply > 0 ? `${(stats.supply / 1e6).toFixed(0)}M` : "—"} icon={Coins} delay={0.3} />
+        <StatCard label="Price" icon={TrendingUp} delay={0}>
+          <AnimatedNumber
+            value={stats.price}
+            prefix="$"
+            decimals={stats.price < 0.01 ? 6 : stats.price < 1 ? 4 : 2}
+          />
+        </StatCard>
+        <StatCard label="Market Cap" icon={BarChart3} delay={0.1}>
+          <AnimatedNumber
+            value={stats.marketCap}
+            formatter={(n) =>
+              n >= 1_000_000
+                ? `$${(n / 1_000_000).toFixed(1)}M`
+                : n >= 1_000
+                  ? `$${(n / 1_000).toFixed(1)}K`
+                  : `$${n.toFixed(0)}`
+            }
+          />
+        </StatCard>
+        <StatCard label="Holders" icon={Users} delay={0.2}>
+          {stats.holders > 0 ? (
+            <AnimatedNumber value={stats.holders} />
+          ) : "—"}
+        </StatCard>
+        <StatCard label="Supply" icon={Coins} delay={0.3}>
+          {stats.supply > 0 ? (
+            <AnimatedNumber
+              value={stats.supply / 1e6}
+              suffix="M"
+              decimals={0}
+            />
+          ) : "—"}
+        </StatCard>
       </div>
     </section>
   );
