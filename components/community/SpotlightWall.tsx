@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 const TWEETS = [
+  "2023067452368667082", // Onchain reality doc for social good
   "2024374993706975263", // Alpha incoming — Wiki page drop
-  "2023067452368667082", // Community tweet
-  "2023006843422011700", // Community tweet
+  "2023006843422011700", // Backing projects social experiment
 ];
 
 function TweetEmbed({ tweetId }: { tweetId: string }) {
@@ -15,33 +15,34 @@ function TweetEmbed({ tweetId }: { tweetId: string }) {
   useEffect(() => {
     if (!ref.current) return;
 
-    // Load Twitter widget script if not already loaded
-    const script = document.createElement("script");
-    script.src = "https://platform.twitter.com/widgets.js";
-    script.async = true;
+    const container = ref.current;
 
-    const existingScript = document.querySelector('script[src="https://platform.twitter.com/widgets.js"]');
-    if (!existingScript) {
+    const render = () => {
+      container.innerHTML = "";
+      window.twttr.widgets.createTweet(tweetId, container, {
+        theme: "dark",
+        align: "center",
+        dnt: true,
+      });
+    };
+
+    // Load script once, all embeds wait via twttr.ready()
+    if (!document.querySelector('script[src="https://platform.twitter.com/widgets.js"]')) {
+      const script = document.createElement("script");
+      script.src = "https://platform.twitter.com/widgets.js";
+      script.async = true;
       document.head.appendChild(script);
     }
 
-    // Render tweet once script is loaded
-    const render = () => {
-      if (window.twttr?.widgets) {
-        ref.current!.innerHTML = "";
-        window.twttr.widgets.createTweet(tweetId, ref.current!, {
-          theme: "dark",
-          align: "center",
-          dnt: true,
-        });
+    // twttr.ready fires immediately if already loaded, or queues for later
+    const check = () => {
+      if (window.twttr?.ready) {
+        window.twttr.ready(render);
+      } else {
+        setTimeout(check, 100);
       }
     };
-
-    if (window.twttr?.widgets) {
-      render();
-    } else {
-      script.onload = render;
-    }
+    check();
   }, [tweetId]);
 
   return <div ref={ref} className="min-h-[200px]" />;
