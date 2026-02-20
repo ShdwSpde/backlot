@@ -35,7 +35,7 @@ export async function GET() {
               method: "getTokenAccounts",
               params: {
                 mint: BACKLOT_MINT,
-                limit: 1,
+                limit: 1000,
                 options: { showZeroBalance: false },
               },
             }),
@@ -52,7 +52,7 @@ export async function GET() {
     // Fallback: use Solana RPC getTokenLargestAccounts for minimum holder count
     if (holders === 0) {
       try {
-        const rpcUrl = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
+        const rpcUrl = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
         const largestRes = await fetch(rpcUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

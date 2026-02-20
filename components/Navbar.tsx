@@ -14,9 +14,9 @@ const links = [
   { href: "/live", label: "Live", badge: true },
   { href: "/episodes", label: "Episodes" },
   { href: "/vote", label: "Vote" },
+  { href: "/treasury", label: "Treasury" },
   { href: "/leaderboard", label: "Board" },
-  { href: "/backstage", label: "Backstage" },
-  { href: "/about", label: "About" },
+  { href: "/changelog", label: "Ship Log" },
   { href: "/pitch", label: "Pitch" },
   { href: "/tech-chat", label: "Chat" },
 ];

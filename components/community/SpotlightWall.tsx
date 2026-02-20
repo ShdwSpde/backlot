@@ -4,8 +4,9 @@ import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 const TWEETS = [
-  "2022745002401521683", // Pinned intro tweet
-  // Add more tweet IDs as they come in
+  "2024374993706975263", // Alpha incoming — Wiki page drop
+  "2023067452368667082", // Community tweet
+  "2023006843422011700", // Community tweet
 ];
 
 function TweetEmbed({ tweetId }: { tweetId: string }) {

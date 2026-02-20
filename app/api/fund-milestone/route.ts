@@ -7,12 +7,25 @@ import {
   LAMPORTS_PER_SOL,
 } from "@solana/web3.js";
 
-const TREASURY_WALLET = new PublicKey(
-  process.env.NEXT_PUBLIC_TREASURY_WALLET || "11111111111111111111111111111112"
-);
+function isValidPublicKey(value: string): boolean {
+  try {
+    new PublicKey(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
+    const treasuryAddress = process.env.TREASURY_WALLET;
+    if (!treasuryAddress) {
+      return NextResponse.json(
+        { error: "Treasury not configured" },
+        { status: 503 }
+      );
+    }
+
     const { milestoneId, amount, walletAddress } = await req.json();
 
     if (!milestoneId || !amount || !walletAddress) {
@@ -22,8 +35,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (typeof amount !== "number" || amount <= 0 || amount > 1000) {
+      return NextResponse.json(
+        { error: "Invalid amount" },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidPublicKey(walletAddress)) {
+      return NextResponse.json(
+        { error: "Invalid wallet address" },
+        { status: 400 }
+      );
+    }
+
+    const TREASURY_WALLET = new PublicKey(treasuryAddress);
     const connection = new Connection(
-      process.env.NEXT_PUBLIC_SOLANA_RPC_URL ||
+      process.env.SOLANA_RPC_URL ||
         "https://api.mainnet-beta.solana.com"
     );
 

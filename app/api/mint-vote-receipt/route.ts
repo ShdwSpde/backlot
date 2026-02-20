@@ -5,7 +5,7 @@ import {
   createSignerFromKeypair,
   publicKey,
 } from "@metaplex-foundation/umi";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     // If no tree is configured, record as pending and return
     if (!treeAddress || !treeAuthorityKey) {
-      await supabase
+      await supabaseAdmin
         .from("vote_receipts")
         .update({ mint_address: "pending_tree_setup" })
         .eq("vote_id", voteId);
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     const mintSig = Buffer.from(signature).toString("base64");
 
     // Update the vote receipt with mint info
-    await supabase
+    await supabaseAdmin
       .from("vote_receipts")
       .update({ mint_address: mintSig })
       .eq("vote_id", voteId);
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("cNFT mint error:", error);
     return NextResponse.json(
-      { error: "Minting failed", details: String(error) },
+      { error: "Minting failed" },
       { status: 500 }
     );
   }

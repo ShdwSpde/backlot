@@ -1,69 +1,86 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export const revalidate = 60;
 
 export async function GET(req: NextRequest) {
   const wallet = req.nextUrl.searchParams.get("wallet");
 
-  const { data: voters } = await supabase.from("votes").select("wallet_address");
-  const { data: chatters } = await supabase.from("chat_messages").select("wallet_address");
+  // Fetch all data in 3 queries instead of N+1
+  const [votesRes, chatsRes, receiptsRes] = await Promise.all([
+    supabaseAdmin.from("votes").select("wallet_address, poll_id"),
+    supabaseAdmin.from("chat_messages").select("wallet_address"),
+    supabaseAdmin.from("vote_receipts").select("wallet_address"),
+  ]);
 
-  const wallets = new Set<string>();
-  (voters || []).forEach((v) => wallets.add(v.wallet_address));
-  (chatters || []).forEach((c) => wallets.add(c.wallet_address));
+  const votes = votesRes.data || [];
+  const chats = chatsRes.data || [];
+  const receipts = receiptsRes.data || [];
 
+  // Aggregate in memory
   const scores: Record<string, {
     wallet_address: string;
     votes_cast: number;
-    polls_participated: number;
+    polls: Set<string>;
     chat_messages_sent: number;
     cnft_receipts: number;
-    total_score: number;
   }> = {};
 
-  for (const w of Array.from(wallets)) {
-    const { count: voteCount } = await supabase
-      .from("votes").select("*", { count: "exact", head: true }).eq("wallet_address", w);
+  function ensure(w: string) {
+    if (!scores[w]) {
+      scores[w] = {
+        wallet_address: w,
+        votes_cast: 0,
+        polls: new Set(),
+        chat_messages_sent: 0,
+        cnft_receipts: 0,
+      };
+    }
+    return scores[w];
+  }
 
-    const { data: uniquePolls } = await supabase
-      .from("votes").select("poll_id").eq("wallet_address", w);
-    const pollsParticipated = new Set((uniquePolls || []).map((p) => p.poll_id)).size;
+  for (const v of votes) {
+    const s = ensure(v.wallet_address);
+    s.votes_cast++;
+    s.polls.add(v.poll_id);
+  }
 
-    const { count: chatCount } = await supabase
-      .from("chat_messages").select("*", { count: "exact", head: true }).eq("wallet_address", w);
+  for (const c of chats) {
+    ensure(c.wallet_address).chat_messages_sent++;
+  }
 
-    const { count: receiptCount } = await supabase
-      .from("vote_receipts").select("*", { count: "exact", head: true }).eq("wallet_address", w);
-
-    const totalScore =
-      (voteCount || 0) * 10 +
-      pollsParticipated * 25 +
-      (chatCount || 0) * 2 +
-      (receiptCount || 0) * 15;
-
-    scores[w] = {
-      wallet_address: w,
-      votes_cast: voteCount || 0,
-      polls_participated: pollsParticipated,
-      chat_messages_sent: chatCount || 0,
-      cnft_receipts: receiptCount || 0,
-      total_score: totalScore,
-    };
+  for (const r of receipts) {
+    ensure(r.wallet_address).cnft_receipts++;
   }
 
   const leaderboard = Object.values(scores)
-    .sort((a, b) => b.total_score - a.total_score)
-    .slice(0, 50);
+    .map((s) => {
+      const polls_participated = s.polls.size;
+      const total_score =
+        s.votes_cast * 10 +
+        polls_participated * 25 +
+        s.chat_messages_sent * 2 +
+        s.cnft_receipts * 15;
+      return {
+        wallet_address: s.wallet_address,
+        votes_cast: s.votes_cast,
+        polls_participated,
+        chat_messages_sent: s.chat_messages_sent,
+        cnft_receipts: s.cnft_receipts,
+        total_score,
+      };
+    })
+    .sort((a, b) => b.total_score - a.total_score);
+
+  const top50 = leaderboard.slice(0, 50);
 
   let myRank = null;
   if (wallet) {
-    const allSorted = Object.values(scores).sort((a, b) => b.total_score - a.total_score);
-    const idx = allSorted.findIndex((s) => s.wallet_address === wallet);
+    const idx = leaderboard.findIndex((s) => s.wallet_address === wallet);
     if (idx >= 0) {
-      myRank = { rank: idx + 1, ...allSorted[idx] };
+      myRank = { rank: idx + 1, ...leaderboard[idx] };
     }
   }
 
-  return NextResponse.json({ leaderboard, myRank });
+  return NextResponse.json({ leaderboard: top50, myRank });
 }

@@ -1,5 +1,6 @@
 import StreamEmbed from "@/components/live/StreamEmbed";
 import LiveChat from "@/components/live/LiveChat";
+import ActivityFeed from "@/components/activity/ActivityFeed";
 
 export default function LivePage() {
   return (
@@ -11,6 +12,9 @@ export default function LivePage() {
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <StreamEmbed />
         <LiveChat />
+      </div>
+      <div className="mt-8">
+        <ActivityFeed />
       </div>
     </div>
   );
