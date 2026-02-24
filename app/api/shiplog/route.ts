@@ -12,6 +12,8 @@ interface ShipEntry {
 
 const SHIP_LOG: ShipEntry[] = [
   // Feb 24, 2026 — Owner notes + episodes restructure
+  { hash: "a887d1d", message: "feat: About link in footer — points to GitHub wiki", date: "2026-02-24", type: "feat", tags: ["ui", "transparency"] },
+  { hash: "b560377", message: "feat: Now Casting CTA links to Google Form for founder submissions", date: "2026-02-24", type: "feat", tags: ["ui", "content"] },
   { hash: "853f974", message: "feat: 'Now Casting' idea submission section — open call for Caribbean founders", date: "2026-02-24", type: "feat", tags: ["ui", "content"] },
   { hash: "853f974", message: "feat: episodes restructured into chapters — YouTube preludes + livestreams", date: "2026-02-24", type: "feat", tags: ["ui", "content", "youtube"] },
   { hash: "853f974", message: "feat: treasury labels top wallet as Supply Pool when >50% supply", date: "2026-02-24", type: "feat", tags: ["ui", "transparency", "solana"] },
