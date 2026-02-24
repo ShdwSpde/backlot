@@ -11,6 +11,11 @@ interface ShipEntry {
 }
 
 const SHIP_LOG: ShipEntry[] = [
+  // Feb 24, 2026 — Owner notes + episodes restructure
+  { hash: "853f974", message: "feat: 'Now Casting' idea submission section — open call for Caribbean founders", date: "2026-02-24", type: "feat", tags: ["ui", "content"] },
+  { hash: "853f974", message: "feat: episodes restructured into chapters — YouTube preludes + livestreams", date: "2026-02-24", type: "feat", tags: ["ui", "content", "youtube"] },
+  { hash: "853f974", message: "feat: treasury labels top wallet as Supply Pool when >50% supply", date: "2026-02-24", type: "feat", tags: ["ui", "transparency", "solana"] },
+  { hash: "853f974", message: "fix: verbiage updates across site — owner notes implemented", date: "2026-02-24", type: "fix", tags: ["ui", "content"] },
   // Feb 20, 2026 — Polish + bells & whistles
   { hash: "pw0001a", message: "feat: animated page transitions — smooth fade/slide between routes", date: "2026-02-20", type: "feat", tags: ["ui", "framer-motion"] },
   { hash: "pw0001b", message: "feat: skeleton loading states — shimmering placeholders replace spinners", date: "2026-02-20", type: "feat", tags: ["ui", "ux"] },
