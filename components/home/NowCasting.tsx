@@ -41,7 +41,7 @@ export default function NowCasting() {
           </p>
 
           <a
-            href="https://t.me/+Kxu0L6zKjY5kZjcx"
+            href="https://forms.gle/jj3vQhAx9xBP57mX7"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-8 inline-flex items-center gap-2 rounded-lg bg-backlot-gold px-6 py-3 font-medium text-backlot-bg transition hover:bg-backlot-gold/90"
