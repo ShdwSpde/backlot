@@ -24,6 +24,7 @@ export default function Footer() {
                 <Link href="/live" className="text-sm text-backlot-muted hover:text-backlot-lavender">Livestream</Link>
                 <Link href="/vote" className="text-sm text-backlot-muted hover:text-backlot-lavender">Vote</Link>
                 <Link href="/backstage" className="text-sm text-backlot-muted hover:text-backlot-lavender">Backstage</Link>
+                <a href="https://github.com/ShdwSpde/backlot/wiki" target="_blank" rel="noopener noreferrer" className="text-sm text-backlot-muted hover:text-backlot-lavender">About</a>
               </div>
             </div>
             <div>
