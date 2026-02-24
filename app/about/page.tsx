@@ -14,7 +14,7 @@ export default function AboutPage() {
     <div className="mx-auto max-w-4xl px-4 py-12">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="font-serif text-3xl text-backlot-text md:text-5xl">The <span className="text-backlot-gold">Experiment</span></h1>
-        <p className="mt-4 text-lg text-backlot-muted">Backlot is an onchain reality docu-series for social good — using a meme token + community support to help &ldquo;too big&rdquo; ideas hit real milestones in public.</p>
+        <p className="mt-4 text-lg text-backlot-muted">Backlot is an on-chain reality docu-series — using a meme token + community to fund and document creatives &amp; innovators with big ideas in public.</p>
       </motion.div>
       <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-16">
         <h2 className="font-serif text-2xl text-backlot-text">How It Works</h2>
@@ -41,7 +41,7 @@ export default function AboutPage() {
         <h2 className="font-serif text-2xl text-backlot-text">First Project: The Complex</h2>
         <p className="mt-2 text-backlot-muted">Portland, Jamaica</p>
         <div className="mt-6 overflow-hidden rounded-xl border border-white/5"><Image src="/brand/banner.jpeg" alt="The Complex - Jamaica" width={1500} height={500} className="w-full" /></div>
-        <p className="mt-4 text-backlot-muted">The Complex is where it all starts. An ambitious creative project in Portland, Jamaica — documented from the ground up as the Backlot community watches, votes, and participates in real time.</p>
+        <p className="mt-4 text-backlot-muted">The Complex is where it all starts. An ambitious project in Jamaica — documented from the ground up as the Backlot community watches, votes, and participates in real time.</p>
       </motion.section>
       <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-16 rounded-xl border border-white/5 bg-backlot-surface p-6">
         <h2 className="font-serif text-lg text-backlot-text">Important Disclaimer</h2>

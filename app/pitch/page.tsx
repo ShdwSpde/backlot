@@ -53,8 +53,8 @@ export default function PitchPage() {
             <span className="text-backlot-text">For Good.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-backlot-muted md:text-xl">
-            Backlot turns ambitious creative projects into community-funded, community-directed docu-series —
-            where every vote is on-chain, every dollar is transparent, and every viewer is a producer.
+            Backlot turns ambitious creative projects into community-funded, community-directed docu-series.
+            Here every vote is on-chain, every dollar is transparent and every viewer is a producer and a backer.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link href="/" className="inline-flex items-center gap-2 rounded-lg bg-backlot-gold px-6 py-3 font-medium text-backlot-bg transition hover:bg-backlot-gold/90">
@@ -73,19 +73,19 @@ export default function PitchPage() {
           <div className="rounded-2xl border border-red-500/10 bg-red-500/5 p-8">
             <h2 className="font-serif text-2xl text-backlot-text">The Problem</h2>
             <ul className="mt-4 space-y-3 text-backlot-muted">
-              <li className="flex items-start gap-2"><span className="mt-1 text-red-400">&#x2717;</span> Creative projects die in obscurity without funding</li>
-              <li className="flex items-start gap-2"><span className="mt-1 text-red-400">&#x2717;</span> Reality TV profits go to networks, not communities</li>
-              <li className="flex items-start gap-2"><span className="mt-1 text-red-400">&#x2717;</span> Token projects lack real-world utility and narrative</li>
+              <li className="flex items-start gap-2"><span className="mt-1 text-red-400">&#x2717;</span> Founders, creatives and innovators with big ideas stall out without early backing</li>
+              <li className="flex items-start gap-2"><span className="mt-1 text-red-400">&#x2717;</span> Reality TV profits go to networks not the people living the story</li>
+              <li className="flex items-start gap-2"><span className="mt-1 text-red-400">&#x2717;</span> Token projects lack real-world utility, stakes and a followable narrative</li>
               <li className="flex items-start gap-2"><span className="mt-1 text-red-400">&#x2717;</span> Web3 content platforms feel soulless and extractive</li>
             </ul>
           </div>
           <div className="rounded-2xl border border-backlot-tropical/10 bg-backlot-tropical/5 p-8">
             <h2 className="font-serif text-2xl text-backlot-text">Our Answer</h2>
             <ul className="mt-4 space-y-3 text-backlot-muted">
-              <li className="flex items-start gap-2"><span className="mt-1 text-backlot-tropical">&#x2713;</span> Community-funded creative projects via $BACKLOT token</li>
-              <li className="flex items-start gap-2"><span className="mt-1 text-backlot-tropical">&#x2713;</span> Viewers become producers — vote, fund, shape the story</li>
-              <li className="flex items-start gap-2"><span className="mt-1 text-backlot-tropical">&#x2713;</span> Every interaction is on-chain: votes, funding, participation</li>
-              <li className="flex items-start gap-2"><span className="mt-1 text-backlot-tropical">&#x2713;</span> Real projects, real places, real impact (starting in Jamaica)</li>
+              <li className="flex items-start gap-2"><span className="mt-1 text-backlot-tropical">&#x2713;</span> Community-backed experiments powered by the $BACKLOT token</li>
+              <li className="flex items-start gap-2"><span className="mt-1 text-backlot-tropical">&#x2713;</span> Viewers become producers and backers. With the power to vote, fund, and actively shape each subject&apos;s story arc.</li>
+              <li className="flex items-start gap-2"><span className="mt-1 text-backlot-tropical">&#x2713;</span> Every decision is on-chain: votes, funding, and participation</li>
+              <li className="flex items-start gap-2"><span className="mt-1 text-backlot-tropical">&#x2713;</span> Real people, real places, real impact. Starting in Jamaica and expanding outward</li>
             </ul>
           </div>
         </motion.div>
@@ -219,21 +219,21 @@ export default function PitchPage() {
                 <Rocket size={18} className="text-backlot-gold" />
               </div>
               <h3 className="mt-3 font-medium text-backlot-text">Built In Public</h3>
-              <p className="mt-1 text-sm text-backlot-muted">This isn&apos;t a pitch deck — it&apos;s a living product. The 24/7 stream is on, the token is live, the community is voting right now.</p>
+              <p className="mt-1 text-sm text-backlot-muted">This isn&apos;t a pitch deck, it&apos;s a live feed. The 24/7 stream is running, the token is live and the community is already voting on what happens next.</p>
             </div>
             <div>
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-backlot-lavender/10">
                 <Users size={18} className="text-backlot-lavender" />
               </div>
               <h3 className="mt-3 font-medium text-backlot-text">Real-World Impact</h3>
-              <p className="mt-1 text-sm text-backlot-muted">Starting in Portland, Jamaica — not another DeFi dashboard. We&apos;re documenting ambitious projects that change real places.</p>
+              <p className="mt-1 text-sm text-backlot-muted">We&apos;re starting in Jamaica IRL, not in another dashboard. We follow real people and ambitious projects on the ground and show how on-chain decisions change real places.</p>
             </div>
             <div>
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-backlot-tropical/10">
                 <Sparkles size={18} className="text-backlot-tropical" />
               </div>
               <h3 className="mt-3 font-medium text-backlot-text">Solana-Native</h3>
-              <p className="mt-1 text-sm text-backlot-muted">8 deep Solana integrations — from Blinks to cNFTs to Jupiter swaps. This is what building on Solana looks like.</p>
+              <p className="mt-1 text-sm text-backlot-muted">Backlot is wired into Solana end to end with 8 deep integrations. Blinks, cNFTs, swaps and more. So every vote, reward and experiment feels fast, cheap. This is what building on Solana looks like.</p>
             </div>
           </div>
         </motion.div>
@@ -255,7 +255,7 @@ export default function PitchPage() {
             </Link>
           </div>
           <p className="mx-auto mt-12 max-w-lg text-sm text-backlot-muted">
-            Built with love from Portland, Jamaica and the internet.<br />
+            Built with love from Jamaica and the internet.<br />
             Token: <code className="rounded bg-white/5 px-1.5 py-0.5 text-xs text-backlot-lavender">DSL6XbjPfhXjD9YYhzxo5Dv2VRt7VSeXRkTefEu5pump</code>
           </p>
         </motion.div>

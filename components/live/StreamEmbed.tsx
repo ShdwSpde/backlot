@@ -43,7 +43,7 @@ export default function StreamEmbed() {
 
       <div className="flex items-center justify-between border-t border-white/5 bg-backlot-surface/50 px-4 py-2">
         <span className="text-xs text-backlot-muted">
-          Streaming from Portland, Jamaica
+          Streaming from Jamaica
         </span>
         <a
           href={PUMP_STREAM_URL}

@@ -9,8 +9,8 @@ export default function LeaderboardPage() {
           <Trophy className="text-backlot-gold" /> Leaderboard
         </h1>
         <p className="mt-2 text-backlot-muted">
-          The most active participants in the Backlot experiment. Score is based
-          on engagement — voting, chatting, and showing up. No token counts.
+          The most active participants in the Backlot experiment. The score is based
+          on engagement; voting, chatting, and showing up. No token counts.
           Just action.
         </p>
       </div>

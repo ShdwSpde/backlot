@@ -12,7 +12,7 @@ export default function Footer() {
               <span className="font-serif text-lg tracking-wider text-backlot-gold">BACKLOT</span>
             </div>
             <p className="mt-3 text-sm text-backlot-muted">
-              An onchain reality docu-series using a meme token + community to fund and document ambitious creative projects in public.
+              An on-chain reality docu-series where a meme token + community fund and document ambitious founders and projects in public.
             </p>
           </div>
 

@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import type { Episode } from "@/lib/types";
 import EpisodeCard from "@/components/episodes/EpisodeCard";
 import GatedContent from "@/components/GatedContent";
-import { Play, ExternalLink, Clock, Radio } from "lucide-react";
+import { Play, ExternalLink, Clock, Radio, Film, ChevronDown } from "lucide-react";
 
 const PUMP_TOKEN = "DSL6XbjPfhXjD9YYhzxo5Dv2VRt7VSeXRkTefEu5pump";
 const clipUrl = (clipId: string) =>
@@ -45,6 +45,74 @@ const pumpStreams: PumpStream[] = [
   { id: "s19", title: "24/7 Live Streaming from Jamaica — Living Art Experiment", duration: "1:50:54", clipId: "20260218_004337:2070734_20260218_004320", date: "Feb 18", likes: 0, episode: 19 },
   { id: "s20", title: "24/7 Live Streaming from Jamaica — Living Art Experiment", duration: "53:44", clipId: "20260218_023836:2070942_20260218_023820", date: "Feb 18", likes: 0, episode: 20 },
 ];
+
+/* ── YouTube prequel episodes ── */
+interface YouTubeEpisode {
+  id: string;
+  videoId: string;
+  title: string;
+  episode: number;
+}
+
+const chapter1Episodes: YouTubeEpisode[] = [
+  { id: "yt1", videoId: "bLdii0MRawQ", title: "Tulum 2020: Birthday Trip — Lost Footage Vlog 1", episode: 1 },
+  { id: "yt2", videoId: "XmebFRE6O0U", title: "Tulum 2020: Birthday Trip — Lost Footage Vlog 2", episode: 2 },
+  { id: "yt3", videoId: "ldXm4YrHABY", title: "Behind the Song: QueeBan — Penthouse (Studio Session)", episode: 3 },
+  { id: "yt4", videoId: "G68IbQkzbzI", title: "Behind the Song: QueeBan — Blast Off (Studio Session)", episode: 4 },
+];
+
+const chapter2Episodes: YouTubeEpisode[] = [
+  { id: "yt5", videoId: "VWtXfzXNlUs", title: "Building The Complex: A Creative Revolution for Jamaica", episode: 5 },
+];
+
+/* ── YouTube embed card ── */
+function YouTubeCard({ ep, index }: { ep: YouTubeEpisode; index: number }) {
+  return (
+    <motion.a
+      href={`https://youtu.be/${ep.videoId}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ delay: index * 0.04, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+      whileHover={{ y: -4 }}
+      className="group relative overflow-hidden rounded-xl border border-white/5 bg-backlot-surface"
+    >
+      <div className="relative aspect-video bg-backlot-bg/50 overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`https://img.youtube.com/vi/${ep.videoId}/hqdefault.jpg`}
+          alt={ep.title}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="rounded-full bg-red-600 p-3 shadow-lg">
+            <Play size={20} className="text-white fill-white ml-0.5" />
+          </div>
+        </div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0, rotate: -12 }}
+          whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: index * 0.04 + 0.2, type: "spring", stiffness: 300, damping: 15 }}
+          className="absolute top-2 left-2 rounded-md bg-backlot-lavender px-2 py-0.5 text-xs font-bold text-white shadow-lg"
+        >
+          EP {ep.episode}
+        </motion.div>
+      </div>
+      <div className="p-4">
+        <h3 className="text-sm font-medium text-backlot-text line-clamp-2 transition-colors group-hover:text-backlot-gold">
+          {ep.title}
+        </h3>
+        <div className="mt-2 flex items-center gap-1 text-xs text-backlot-muted">
+          <ExternalLink size={10} className="transition-colors group-hover:text-red-400" />
+          <span className="transition-colors group-hover:text-red-400">YouTube</span>
+        </div>
+      </div>
+    </motion.a>
+  );
+}
 
 /* ── Animated counter ── */
 function AnimatedNumber({ value, className }: { value: number; className?: string }) {
@@ -178,6 +246,7 @@ function StreamCard({ stream, index }: { stream: PumpStream; index: number }) {
 export default function EpisodesPage() {
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAllStreams, setShowAllStreams] = useState(false);
 
   useEffect(() => {
     supabase
@@ -239,7 +308,7 @@ export default function EpisodesPage() {
       >
         <div className="text-center">
           <div className="text-2xl font-bold text-backlot-gold">
-            <AnimatedNumber value={pumpStreams.length} />
+            <AnimatedNumber value={chapter1Episodes.length + chapter2Episodes.length + pumpStreams.length} />
           </div>
           <motion.div
             className="text-xs text-backlot-muted"
@@ -260,7 +329,7 @@ export default function EpisodesPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9 }}
           >
-            Days Streaming
+            Chapters
           </motion.div>
         </div>
         <div className="text-center">
@@ -282,8 +351,56 @@ export default function EpisodesPage() {
         </div>
       </motion.div>
 
-      {/* ── Previous Streams section ── */}
-      <div className="mt-10">
+      {/* ── Chapter 1: Who is Kim? ── */}
+      <div className="mt-12">
+        <motion.div
+          className="flex items-center gap-3 mb-6"
+          initial={{ opacity: 0, x: -10 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="rounded-lg bg-backlot-lavender/10 p-2">
+            <Film size={18} className="text-backlot-lavender" />
+          </div>
+          <div>
+            <h2 className="font-serif text-xl text-backlot-text">Chapter 1: Who is Kim?</h2>
+            <p className="text-xs text-backlot-muted">The prequel — meet the founder behind Backlot</p>
+          </div>
+        </motion.div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {chapter1Episodes.map((ep, i) => (
+            <YouTubeCard key={ep.id} ep={ep} index={i} />
+          ))}
+        </div>
+      </div>
+
+      {/* ── Chapter 2: A New Beginning ── */}
+      <div className="mt-12">
+        <motion.div
+          className="flex items-center gap-3 mb-6"
+          initial={{ opacity: 0, x: -10 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="rounded-lg bg-backlot-gold/10 p-2">
+            <Film size={18} className="text-backlot-gold" />
+          </div>
+          <div>
+            <h2 className="font-serif text-xl text-backlot-text">Chapter 2: A New Beginning</h2>
+            <p className="text-xs text-backlot-muted">What is The Complex?</p>
+          </div>
+        </motion.div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {chapter2Episodes.map((ep, i) => (
+            <YouTubeCard key={ep.id} ep={ep} index={i} />
+          ))}
+        </div>
+      </div>
+
+      {/* ── Chapter 3: The Experiment (Livestreams) ── */}
+      <div className="mt-12">
         <motion.div
           className="flex items-center gap-3 mb-6"
           initial={{ opacity: 0, x: -10 }}
@@ -299,15 +416,26 @@ export default function EpisodesPage() {
             <Play size={18} className="text-backlot-gold fill-backlot-gold" />
           </motion.div>
           <div>
-            <h2 className="font-serif text-xl text-backlot-text">Previous Streams</h2>
+            <h2 className="font-serif text-xl text-backlot-text">Chapter 3: The Experiment</h2>
             <p className="text-xs text-backlot-muted">Live recordings from pump.fun — click to replay</p>
           </div>
         </motion.div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {pumpStreams.slice().reverse().map((stream, i) => (
+          {pumpStreams.slice().reverse().slice(0, showAllStreams ? undefined : 8).map((stream, i) => (
             <StreamCard key={stream.id} stream={stream} index={i} />
           ))}
         </div>
+        {pumpStreams.length > 8 && !showAllStreams && (
+          <motion.button
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            onClick={() => setShowAllStreams(true)}
+            className="mx-auto mt-6 flex items-center gap-2 rounded-lg border border-white/10 px-6 py-2.5 text-sm text-backlot-muted transition hover:border-backlot-lavender/30 hover:text-backlot-lavender"
+          >
+            Show all {pumpStreams.length} streams <ChevronDown size={14} />
+          </motion.button>
+        )}
       </div>
 
       {/* ── Supabase episodes (if any exist) ── */}

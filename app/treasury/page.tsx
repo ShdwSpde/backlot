@@ -47,14 +47,14 @@ const BAR_COLORS = [
 ];
 const OTHERS_COLOR = "bg-backlot-muted";
 
-const LEGEND_LABELS = [
-  "Top Holder",
-  "2nd Holder",
-  "3rd Holder",
-  "4th Holder",
-  "5th Holder",
-  "Others",
-];
+function getLegendLabels(holders: HolderRow[]): string[] {
+  const labels = ["Top Holder", "2nd Holder", "3rd Holder", "4th Holder", "5th Holder", "Others"];
+  // If #1 holder has >50% of supply, label as supply pool
+  if (holders.length > 0 && holders[0].percentage > 50) {
+    labels[0] = "Supply Pool / Open Market";
+  }
+  return labels;
+}
 const LEGEND_COLORS = [
   "bg-backlot-gold",
   "bg-backlot-lavender",
@@ -80,12 +80,13 @@ export default function TreasuryPage() {
 
   // Build distribution segments for the bar chart
   const segments: { label: string; percentage: number; color: string }[] = [];
+  const legendLabels = data ? getLegendLabels(data.holders) : [];
   if (data && data.holders.length > 0) {
     const top5 = data.holders.slice(0, 5);
     let accounted = 0;
     top5.forEach((h, i) => {
       segments.push({
-        label: LEGEND_LABELS[i],
+        label: legendLabels[i],
         percentage: h.percentage,
         color: BAR_COLORS[i],
       });
@@ -223,6 +224,13 @@ export default function TreasuryPage() {
                 </div>
               ))}
             </div>
+
+            {data.holders.length > 0 && data.holders[0].percentage > 50 && (
+              <p className="mt-4 text-xs text-backlot-muted">
+                <span className="text-backlot-gold">Note:</span> The top wallet represents the supply pool / open market liquidity (bonding curve) — not a single holder.
+                The majority of $BACKLOT supply is available for anyone to buy.
+              </p>
+            )}
           </motion.div>
 
           {/* Section 4: Top Holders Table */}
@@ -256,14 +264,21 @@ export default function TreasuryPage() {
                 } ${holder.rank === 1 ? "border-l-2 border-l-backlot-gold" : ""}`}
               >
                 <span className="text-backlot-muted">#{holder.rank}</span>
-                <a
-                  href={`https://solscan.io/account/${holder.walletFull}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-mono text-backlot-lavender transition-colors hover:text-backlot-gold"
-                >
-                  {holder.wallet}
-                </a>
+                <div>
+                  <a
+                    href={`https://solscan.io/account/${holder.walletFull}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-backlot-lavender transition-colors hover:text-backlot-gold"
+                  >
+                    {holder.wallet}
+                  </a>
+                  {holder.rank === 1 && holder.percentage > 50 && (
+                    <span className="ml-2 rounded-full bg-backlot-gold/10 px-2 py-0.5 text-[10px] text-backlot-gold">
+                      Supply Pool
+                    </span>
+                  )}
+                </div>
                 <span className="text-right text-backlot-text">
                   {formatAmount(holder.amount)}
                 </span>
