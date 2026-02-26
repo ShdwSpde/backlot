@@ -13,7 +13,7 @@ import {
 } from "@solana/spl-token";
 import { ACTIONS_CORS_HEADERS, SITE_URL } from "@/lib/actions";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { getBacklotBalance } from "@/lib/wallet";
+import { getBacklotBalance, getHoldingSince, getHoldingMultiplier } from "@/lib/wallet";
 
 const BACKLOT_MINT = new PublicKey(
   (process.env.NEXT_PUBLIC_BACKLOT_TOKEN_MINT || "DSL6XbjPfhXjD9YYhzxo5Dv2VRt7VSeXRkTefEu5pump").trim()
@@ -147,6 +147,8 @@ export async function POST(req: NextRequest) {
       (process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com").trim()
     );
     const balance = await getBacklotBalance(connection, account);
+    const holdingSince = await getHoldingSince(connection, account);
+    const multiplier = getHoldingMultiplier(holdingSince);
 
     if (balance < VOTE_COST) {
       return NextResponse.json(
@@ -259,7 +261,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         transaction: serialized,
-        message: `Vote: ${option?.label || "recorded"} on "${poll?.title || "poll"}" (10 $BACKLOT burned)`,
+        message: `Vote: ${option?.label || "recorded"} on "${poll?.title || "poll"}" (10 $BACKLOT burned)${multiplier > 1 ? ` — ${multiplier.toFixed(1)}x holding bonus!` : ""}`,
       },
       { headers: ACTIONS_CORS_HEADERS }
     );

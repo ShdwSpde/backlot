@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { useBacklotTier } from "@/hooks/useBacklotTier";
 import type { Poll, PollOption, Tier } from "@/lib/types";
 import TierBadge from "@/components/TierBadge";
+import DiamondHandsBadge from "@/components/DiamondHandsBadge";
 import { Check, Link2, Twitter } from "lucide-react";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.backlotsocial.xyz";
@@ -25,7 +26,7 @@ const tierRank: Record<Tier, number> = { viewer: 0, supporter: 1, producer: 2, e
 export default function PollCard({ poll }: { poll: Poll & { options: PollOption[] } }) {
   const { publicKey, connected, sendTransaction } = useWallet();
   const { connection } = useConnection();
-  const { tier, balance } = useBacklotTier();
+  const { tier, balance, holdingMultiplier } = useBacklotTier();
   const [options, setOptions] = useState(poll.options || []);
   const [votedOptionId, setVotedOptionId] = useState<string | null>(null);
   const [voting, setVoting] = useState(false);
@@ -153,7 +154,12 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
         {!pollInactive && confirming && <span className="text-backlot-lavender animate-pulse">Confirming TX...</span>}
         {!pollInactive && !confirming && votedOptionId && <span className="text-backlot-tropical">Vote recorded — cNFT receipt pending</span>}
         {!pollInactive && !confirming && !votedOptionId && connected && !hasSufficientBalance && <span className="text-red-400">Insufficient $BACKLOT (need {VOTE_COST})</span>}
-        {!pollInactive && !confirming && !votedOptionId && connected && hasSufficientBalance && !voting && <span className="text-backlot-muted" title="Tokens are permanently removed from supply — not sent to any wallet">🔥 {VOTE_COST} $BACKLOT burned per vote</span>}
+        {!pollInactive && !confirming && !votedOptionId && connected && hasSufficientBalance && !voting && (
+          <span className="flex items-center gap-2 text-backlot-muted" title="Tokens are permanently removed from supply — not sent to any wallet">
+            <span>🔥 {VOTE_COST} $BACKLOT burned per vote</span>
+            <DiamondHandsBadge multiplier={holdingMultiplier} />
+          </span>
+        )}
       </div>
     </motion.div>
   );

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { getBacklotBalance } from "@/lib/wallet";
+import { getBacklotBalance, getHoldingSince, getHoldingMultiplier } from "@/lib/wallet";
 
 const BACKLOT_MINT = new PublicKey(
   (process.env.NEXT_PUBLIC_BACKLOT_TOKEN_MINT || "DSL6XbjPfhXjD9YYhzxo5Dv2VRt7VSeXRkTefEu5pump").trim()
@@ -142,6 +142,11 @@ export async function POST(req: NextRequest) {
     const balance = await getBacklotBalance(connection, voterPubkey);
     const tier = getTierFromBalance(balance);
 
+    // Time-weighted voting: longer holders get up to 4x multiplier
+    const holdingSince = await getHoldingSince(connection, voterPubkey);
+    const multiplier = getHoldingMultiplier(holdingSince);
+    const weight = Math.max(Math.floor(balance * multiplier), 1);
+
     // Insert vote
     const { data: vote, error: voteError } = await supabaseAdmin
       .from("votes")
@@ -150,7 +155,8 @@ export async function POST(req: NextRequest) {
         option_id: optionId,
         wallet_address: walletAddr,
         tier_at_vote: tier,
-        weight: Math.max(balance, 1),
+        weight,
+        holding_multiplier: Math.round(multiplier * 100) / 100,
       })
       .select()
       .single();
@@ -172,7 +178,7 @@ export async function POST(req: NextRequest) {
         .from("poll_options")
         .update({
           vote_count: (current?.vote_count || 0) + 1,
-          weighted_count: (current?.weighted_count || 0) + Math.max(balance, 1),
+          weighted_count: (current?.weighted_count || 0) + weight,
         })
         .eq("id", optionId);
     }

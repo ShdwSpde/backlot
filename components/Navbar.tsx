@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useBacklotTier } from "@/hooks/useBacklotTier";
 import TierBadge from "./TierBadge";
+import DiamondHandsBadge from "./DiamondHandsBadge";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -23,7 +24,7 @@ const links = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { tier, connected } = useBacklotTier();
+  const { tier, holdingMultiplier, connected } = useBacklotTier();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
@@ -57,6 +58,7 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           {mounted && connected && <TierBadge tier={tier} />}
+          {mounted && connected && <DiamondHandsBadge multiplier={holdingMultiplier} compact />}
           {mounted && <WalletMultiButton className="!bg-backlot-lavender/20 !text-backlot-lavender hover:!bg-backlot-lavender/30 !rounded-lg !h-9 !text-sm" />}
         </div>
 
@@ -84,6 +86,7 @@ export default function Navbar() {
           ))}
           <div className="mt-3 flex items-center gap-2">
             {connected && <TierBadge tier={tier} />}
+            {connected && <DiamondHandsBadge multiplier={holdingMultiplier} compact />}
             <WalletMultiButton className="!bg-backlot-lavender/20 !text-backlot-lavender !rounded-lg !h-9 !text-sm" />
           </div>
         </div>
