@@ -79,7 +79,15 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
 
       setConfirming(true);
       signature = await sendTransaction(tx, connection);
-      await connection.confirmTransaction(signature, "confirmed");
+
+      // Poll for confirmation via HTTP (WebSocket not supported through RPC proxy)
+      for (let i = 0; i < 30; i++) {
+        const { value } = await connection.getSignatureStatuses([signature]);
+        const status = value?.[0];
+        if (status?.confirmationStatus === "confirmed" || status?.confirmationStatus === "finalized") break;
+        if (status?.err) throw new Error(`Transaction failed: ${JSON.stringify(status.err)}`);
+        await new Promise((r) => setTimeout(r, 1500));
+      }
     } catch (err) {
       console.error("Vote TX failed:", err);
       setConfirming(false);

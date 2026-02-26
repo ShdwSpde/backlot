@@ -6,7 +6,7 @@ import {
   WalletProvider as SolanaWalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
+import { SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 import type { WalletError, Adapter } from "@solana/wallet-adapter-base";
 
 import "@solana/wallet-adapter-react-ui/styles.css";
@@ -16,7 +16,7 @@ export default function WalletProvider({ children }: { children: ReactNode }) {
   const endpoint = `${siteUrl}/api/rpc`;
 
   const wallets = useMemo(
-    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
+    () => [new SolflareWalletAdapter()],
     []
   );
 
@@ -25,7 +25,7 @@ export default function WalletProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
+    <ConnectionProvider endpoint={endpoint} config={{ commitment: "confirmed" }}>
       <SolanaWalletProvider wallets={wallets} onError={onError} autoConnect>
         <WalletModalProvider>{children}</WalletModalProvider>
       </SolanaWalletProvider>
