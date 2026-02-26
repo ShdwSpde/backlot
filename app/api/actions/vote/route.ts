@@ -42,6 +42,13 @@ function isValidPublicKey(value: string): boolean {
 export async function GET(req: NextRequest) {
   const pollId = req.nextUrl.searchParams.get("pollId");
 
+  // Redirect browsers to the vote page (Blink clients send Accept: application/json)
+  const accept = req.headers.get("accept") || "";
+  if (accept.includes("text/html") && !accept.includes("application/json")) {
+    const dest = pollId ? `${SITE_URL}/vote?pollId=${pollId}` : `${SITE_URL}/vote`;
+    return NextResponse.redirect(dest, { status: 302 });
+  }
+
   if (!pollId || !UUID_RE.test(pollId)) {
     return NextResponse.json(
       { error: "Valid pollId required" },
