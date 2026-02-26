@@ -190,9 +190,13 @@ export async function POST(req: NextRequest) {
 
     // Trigger cNFT mint in background
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://backlotsocial.xyz";
+    const mintHeaders: Record<string, string> = { "Content-Type": "application/json" };
+    if (process.env.INTERNAL_API_SECRET) {
+      mintHeaders["x-internal-secret"] = process.env.INTERNAL_API_SECRET;
+    }
     fetch(`${siteUrl}/api/mint-vote-receipt`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: mintHeaders,
       body: JSON.stringify({
         voteId: vote.id,
         walletAddress: walletAddr,

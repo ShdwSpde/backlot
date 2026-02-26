@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 const RATE_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "/api/actions/vote": { max: 10, windowMs: 60_000 },
   "/api/mint-vote-receipt": { max: 5, windowMs: 60_000 },
+  "/api/vote": { max: 5, windowMs: 60_000 },
+  "/api/rpc": { max: 60, windowMs: 60_000 },
   "/api/fund-milestone": { max: 10, windowMs: 60_000 },
   "/api/leaderboard": { max: 20, windowMs: 60_000 },
   "/api/token-stats": { max: 30, windowMs: 60_000 },

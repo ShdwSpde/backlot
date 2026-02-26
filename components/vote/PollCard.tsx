@@ -38,7 +38,9 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
   const totalVotes = options.reduce((sum, o) => sum + o.vote_count, 0);
   const totalWeighted = options.reduce((sum, o) => sum + ((o as PollOption & { weighted_count?: number }).weighted_count || o.vote_count), 0);
   const hasSufficientBalance = balance >= VOTE_COST;
-  const canVote = connected && tierRank[tier] >= tierRank[poll.tier_required as Tier] && hasSufficientBalance;
+  const pollExpired = poll.ends_at ? new Date(poll.ends_at) < new Date() : false;
+  const pollInactive = !poll.is_active || pollExpired;
+  const canVote = connected && !pollInactive && tierRank[tier] >= tierRank[poll.tier_required as Tier] && hasSufficientBalance;
 
   useEffect(() => {
     if (!publicKey) return;
@@ -149,10 +151,11 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
       )}
       <div className="mt-4 flex items-center justify-between text-xs text-backlot-muted">
         <span>{totalVotes} votes ({totalWeighted.toLocaleString()} weighted)</span>
-        {confirming && <span className="text-backlot-lavender animate-pulse">Confirming TX...</span>}
-        {!confirming && votedOptionId && <span className="text-backlot-tropical">Vote recorded — cNFT receipt pending</span>}
-        {!confirming && !votedOptionId && connected && !hasSufficientBalance && <span className="text-red-400">Insufficient $BACKLOT (need {VOTE_COST})</span>}
-        {!confirming && !votedOptionId && connected && hasSufficientBalance && !voting && <span className="text-backlot-muted">Cost: {VOTE_COST} $BACKLOT</span>}
+        {pollInactive && <span className="text-red-400">{pollExpired ? "Poll ended" : "Poll closed"}</span>}
+        {!pollInactive && confirming && <span className="text-backlot-lavender animate-pulse">Confirming TX...</span>}
+        {!pollInactive && !confirming && votedOptionId && <span className="text-backlot-tropical">Vote recorded — cNFT receipt pending</span>}
+        {!pollInactive && !confirming && !votedOptionId && connected && !hasSufficientBalance && <span className="text-red-400">Insufficient $BACKLOT (need {VOTE_COST})</span>}
+        {!pollInactive && !confirming && !votedOptionId && connected && hasSufficientBalance && !voting && <span className="text-backlot-muted">Cost: {VOTE_COST} $BACKLOT</span>}
       </div>
     </motion.div>
   );
