@@ -6,9 +6,6 @@ import { getBacklotBalance } from "@/lib/wallet";
 const BACKLOT_MINT = new PublicKey(
   (process.env.NEXT_PUBLIC_BACKLOT_TOKEN_MINT || "DSL6XbjPfhXjD9YYhzxo5Dv2VRt7VSeXRkTefEu5pump").trim()
 );
-const TREASURY_WALLET = new PublicKey(
-  (process.env.TREASURY_WALLET || "H3HQzT6PqyFWzQLAtexP98FWsY4cUJjBHUSKDbec93Bt").trim()
-);
 const VOTE_COST = 10;
 const TOKEN_DECIMALS = 6;
 const VOTE_COST_RAW = BigInt(VOTE_COST * 10 ** TOKEN_DECIMALS);
@@ -82,25 +79,25 @@ export async function POST(req: NextRequest) {
 
     const voterPubkey = new PublicKey(walletAddr);
 
-    // Verify the TX contains a transfer to the treasury for the correct amount
+    // Verify the TX contains a burn of at least VOTE_COST_RAW $BACKLOT
     const preBalances = tx.meta.preTokenBalances || [];
     const postBalances = tx.meta.postTokenBalances || [];
 
-    // Find treasury ATA in post-token balances and verify it received tokens
-    const treasuryPost = postBalances.find(
-      (b) => b.mint === BACKLOT_MINT.toBase58() && b.owner === TREASURY_WALLET.toBase58()
+    const mintAddr = BACKLOT_MINT.toBase58();
+    const voterPre = preBalances.find(
+      (b) => b.mint === mintAddr && b.owner === walletAddr
     );
-    const treasuryPre = preBalances.find(
-      (b) => b.mint === BACKLOT_MINT.toBase58() && b.owner === TREASURY_WALLET.toBase58()
+    const voterPost = postBalances.find(
+      (b) => b.mint === mintAddr && b.owner === walletAddr
     );
 
-    const preAmount = BigInt(treasuryPre?.uiTokenAmount?.amount || "0");
-    const postAmount = BigInt(treasuryPost?.uiTokenAmount?.amount || "0");
-    const transferred = postAmount - preAmount;
+    const preAmount = BigInt(voterPre?.uiTokenAmount?.amount || "0");
+    const postAmount = BigInt(voterPost?.uiTokenAmount?.amount || "0");
+    const burned = preAmount - postAmount;
 
-    if (transferred < VOTE_COST_RAW) {
+    if (burned < VOTE_COST_RAW) {
       return NextResponse.json(
-        { error: `Insufficient transfer: expected ${VOTE_COST_RAW.toString()}, got ${transferred.toString()}` },
+        { error: `Insufficient burn: expected ${VOTE_COST_RAW.toString()}, got ${burned.toString()}` },
         { status: 400 }
       );
     }

@@ -16,6 +16,7 @@ export default function VotePage() {
     <div className="mx-auto max-w-3xl px-4 py-12">
       <h1 className="font-serif text-3xl text-backlot-text md:text-4xl">Vote</h1>
       <p className="mt-2 text-backlot-muted">Shape the experiment. Your votes decide what happens next.</p>
+      <p className="mt-1 text-xs text-backlot-muted/60">Each vote costs 10 $BACKLOT. Tokens are permanently burned (removed from total supply) — they are not sent to any wallet or treasury. Every vote makes the remaining supply scarcer.</p>
       <div className="mt-8"><VoteReceiptBanner /></div>
       <GatedContent requiredTier="supporter">
         <div className="mt-8 space-y-6">

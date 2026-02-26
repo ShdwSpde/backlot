@@ -7,11 +7,9 @@ import {
   TransactionInstruction,
 } from "@solana/web3.js";
 import {
-  createTransferInstruction,
-  createAssociatedTokenAccountIdempotentInstruction,
+  createBurnInstruction,
   getAssociatedTokenAddressSync,
   TOKEN_2022_PROGRAM_ID,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { ACTIONS_CORS_HEADERS, SITE_URL } from "@/lib/actions";
 import { supabaseAdmin } from "@/lib/supabase-admin";
@@ -19,9 +17,6 @@ import { getBacklotBalance } from "@/lib/wallet";
 
 const BACKLOT_MINT = new PublicKey(
   (process.env.NEXT_PUBLIC_BACKLOT_TOKEN_MINT || "DSL6XbjPfhXjD9YYhzxo5Dv2VRt7VSeXRkTefEu5pump").trim()
-);
-const TREASURY_WALLET = new PublicKey(
-  (process.env.TREASURY_WALLET || "H3HQzT6PqyFWzQLAtexP98FWsY4cUJjBHUSKDbec93Bt").trim()
 );
 const VOTE_COST = 10;
 const TOKEN_DECIMALS = 6;
@@ -80,7 +75,7 @@ export async function GET(req: NextRequest) {
     {
       icon: `${SITE_URL}/brand/banner.jpeg`,
       title: `BACKLOT Vote: ${poll.title}`,
-      description: (poll.description || "Vote on what happens next in the Backlot experiment.") + ` (Cost: ${VOTE_COST} $BACKLOT)`,
+      description: (poll.description || "Vote on what happens next in the Backlot experiment.") + ` (Cost: ${VOTE_COST} $BACKLOT — burned)`,
       label: "Vote",
       links: { actions },
     },
@@ -160,9 +155,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Derive ATAs for SPL transfer
+    // Derive voter ATA for burn
     const voterATA = getAssociatedTokenAddressSync(BACKLOT_MINT, account, false, TOKEN_2022_PROGRAM_ID);
-    const treasuryATA = getAssociatedTokenAddressSync(BACKLOT_MINT, TREASURY_WALLET, false, TOKEN_2022_PROGRAM_ID);
 
     const memoText = JSON.stringify({
       type: "backlot_vote",
@@ -181,16 +175,9 @@ export async function POST(req: NextRequest) {
     tx.recentBlockhash = blockhash;
     tx.feePayer = account;
 
-    // Ensure treasury ATA exists (idempotent — no-op if already created)
+    // Burn 10 $BACKLOT — permanently removed from supply
     tx.add(
-      createAssociatedTokenAccountIdempotentInstruction(
-        account, treasuryATA, TREASURY_WALLET, BACKLOT_MINT, TOKEN_2022_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID
-      )
-    );
-
-    // SPL token transfer: 10 $BACKLOT → treasury
-    tx.add(
-      createTransferInstruction(voterATA, treasuryATA, account, VOTE_COST_RAW, [], TOKEN_2022_PROGRAM_ID)
+      createBurnInstruction(voterATA, BACKLOT_MINT, account, VOTE_COST_RAW, [], TOKEN_2022_PROGRAM_ID)
     );
 
     // Memo instruction for on-chain vote record
@@ -272,7 +259,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         transaction: serialized,
-        message: `Vote: ${option?.label || "recorded"} on "${poll?.title || "poll"}" (10 $BACKLOT fee)`,
+        message: `Vote: ${option?.label || "recorded"} on "${poll?.title || "poll"}" (10 $BACKLOT burned)`,
       },
       { headers: ACTIONS_CORS_HEADERS }
     );

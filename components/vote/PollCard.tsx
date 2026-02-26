@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { Transaction, PublicKey } from "@solana/web3.js";
-import { createTransferInstruction, createAssociatedTokenAccountIdempotentInstruction, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { createBurnInstruction, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { supabase } from "@/lib/supabase";
 import { useBacklotTier } from "@/hooks/useBacklotTier";
 import type { Poll, PollOption, Tier } from "@/lib/types";
@@ -15,9 +15,6 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.backlotsocial.
 
 const BACKLOT_MINT = new PublicKey(
   (process.env.NEXT_PUBLIC_BACKLOT_TOKEN_MINT || "DSL6XbjPfhXjD9YYhzxo5Dv2VRt7VSeXRkTefEu5pump").trim()
-);
-const TREASURY_WALLET = new PublicKey(
-  (process.env.NEXT_PUBLIC_TREASURY_WALLET || "H3HQzT6PqyFWzQLAtexP98FWsY4cUJjBHUSKDbec93Bt").trim()
 );
 const VOTE_COST = 10;
 const TOKEN_DECIMALS = 6;
@@ -58,19 +55,12 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
 
     let signature: string;
     try {
-      // Build SPL token transfer TX: 10 $BACKLOT → treasury
+      // Build burn TX: 10 $BACKLOT burned permanently
       const voterATA = getAssociatedTokenAddressSync(BACKLOT_MINT, publicKey, false, TOKEN_2022_PROGRAM_ID);
-      const treasuryATA = getAssociatedTokenAddressSync(BACKLOT_MINT, TREASURY_WALLET, false, TOKEN_2022_PROGRAM_ID);
 
       const tx = new Transaction();
-      // Ensure treasury ATA exists (idempotent — no-op if already created)
       tx.add(
-        createAssociatedTokenAccountIdempotentInstruction(
-          publicKey, treasuryATA, TREASURY_WALLET, BACKLOT_MINT, TOKEN_2022_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID
-        )
-      );
-      tx.add(
-        createTransferInstruction(voterATA, treasuryATA, publicKey, VOTE_COST_RAW, [], TOKEN_2022_PROGRAM_ID)
+        createBurnInstruction(voterATA, BACKLOT_MINT, publicKey, VOTE_COST_RAW, [], TOKEN_2022_PROGRAM_ID)
       );
 
       const { blockhash } = await connection.getLatestBlockhash();
@@ -163,7 +153,7 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
         {!pollInactive && confirming && <span className="text-backlot-lavender animate-pulse">Confirming TX...</span>}
         {!pollInactive && !confirming && votedOptionId && <span className="text-backlot-tropical">Vote recorded — cNFT receipt pending</span>}
         {!pollInactive && !confirming && !votedOptionId && connected && !hasSufficientBalance && <span className="text-red-400">Insufficient $BACKLOT (need {VOTE_COST})</span>}
-        {!pollInactive && !confirming && !votedOptionId && connected && hasSufficientBalance && !voting && <span className="text-backlot-muted">Cost: {VOTE_COST} $BACKLOT</span>}
+        {!pollInactive && !confirming && !votedOptionId && connected && hasSufficientBalance && !voting && <span className="text-backlot-muted" title="Tokens are permanently removed from supply — not sent to any wallet">🔥 {VOTE_COST} $BACKLOT burned per vote</span>}
       </div>
     </motion.div>
   );
