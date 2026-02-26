@@ -11,7 +11,7 @@ import type { Poll, PollOption, Tier } from "@/lib/types";
 import TierBadge from "@/components/TierBadge";
 import { Check, Link2, Twitter } from "lucide-react";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://backlotsocial.xyz";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.backlotsocial.xyz";
 
 const BACKLOT_MINT = new PublicKey(
   (process.env.NEXT_PUBLIC_BACKLOT_TOKEN_MINT || "DSL6XbjPfhXjD9YYhzxo5Dv2VRt7VSeXRkTefEu5pump").trim()

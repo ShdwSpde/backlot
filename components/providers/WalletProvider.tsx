@@ -12,7 +12,7 @@ import type { WalletError, Adapter } from "@solana/wallet-adapter-base";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
 export default function WalletProvider({ children }: { children: ReactNode }) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://backlotsocial.xyz";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.backlotsocial.xyz";
   const endpoint = `${siteUrl}/api/rpc`;
 
   const wallets = useMemo(

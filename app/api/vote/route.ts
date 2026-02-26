@@ -189,7 +189,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Trigger cNFT mint in background
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://backlotsocial.xyz";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.backlotsocial.xyz";
     const mintHeaders: Record<string, string> = { "Content-Type": "application/json" };
     if (process.env.INTERNAL_API_SECRET) {
       mintHeaders["x-internal-secret"] = process.env.INTERNAL_API_SECRET;

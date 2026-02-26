@@ -9,14 +9,14 @@ export const metadata: Metadata = {
   title: "BACKLOT — Onchain Reality Docu-Series",
   description:
     "An on-chain reality docu-series using a meme token + community to fund and document ambitious founders and projects from the Caribbean and beyond in public.",
-  metadataBase: new URL("https://backlotsocial.xyz"),
+  metadataBase: new URL("https://www.backlotsocial.xyz"),
   openGraph: {
     title: "BACKLOT — Onchain Reality Docu-Series",
     description: "A social experiment testing how far community can take big ideas IRL. Hold $BACKLOT to vote, fund milestones, and shape the story.",
     images: [{ url: "/brand/banner.jpeg", width: 1500, height: 500, alt: "BACKLOT — Reality TV. On Chain. For Good." }],
     type: "website",
     siteName: "BACKLOT",
-    url: "https://backlotsocial.xyz",
+    url: "https://www.backlotsocial.xyz",
   },
   twitter: {
     card: "summary_large_image",

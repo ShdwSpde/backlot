@@ -7,4 +7,4 @@ export const ACTIONS_CORS_HEADERS = {
 };
 
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://backlotsocial.xyz";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.backlotsocial.xyz";

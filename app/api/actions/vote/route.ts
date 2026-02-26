@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { waitUntil } from "@vercel/functions";
 import {
   Connection,
   PublicKey,
@@ -196,7 +197,71 @@ export async function POST(req: NextRequest) {
 
     const serialized = tx.serialize({ requireAllSignatures: false }).toString("base64");
 
-    // Return TX only — vote is recorded after on-chain confirmation via /api/vote
+    // After returning the TX, poll for on-chain confirmation and record the vote
+    // This runs in the background — the response is returned immediately
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.backlotsocial.xyz";
+    const pollForConfirmation = async () => {
+      try {
+        // Wait for the TX to appear on-chain (user needs to sign first)
+        await new Promise((r) => setTimeout(r, 5000));
+
+        // Poll for the signature in recent transactions for this wallet
+        const signatures = await connection.getSignaturesForAddress(account, { limit: 5 });
+        for (const sig of signatures) {
+          const parsed = await connection.getParsedTransaction(sig.signature, {
+            commitment: "confirmed",
+            maxSupportedTransactionVersion: 0,
+          });
+          if (!parsed || !parsed.meta || parsed.meta.err) continue;
+
+          // Check if this TX contains our memo with the vote data
+          const logMessages = parsed.meta.logMessages || [];
+          const hasMemo = logMessages.some((log) => log.includes("backlot_vote") && log.includes(pollId));
+          if (!hasMemo) continue;
+
+          // Found the confirmed vote TX — record it via /api/vote
+          const mintHeaders: Record<string, string> = { "Content-Type": "application/json" };
+          if (process.env.INTERNAL_API_SECRET) {
+            mintHeaders["x-internal-secret"] = process.env.INTERNAL_API_SECRET;
+          }
+          await fetch(`${siteUrl}/api/vote`, {
+            method: "POST",
+            headers: mintHeaders,
+            body: JSON.stringify({ pollId, optionId, txSignature: sig.signature }),
+          });
+          return;
+        }
+
+        // Retry a few more times with longer delays
+        for (let attempt = 0; attempt < 6; attempt++) {
+          await new Promise((r) => setTimeout(r, 5000));
+          const sigs = await connection.getSignaturesForAddress(account, { limit: 5 });
+          for (const sig of sigs) {
+            const parsed = await connection.getParsedTransaction(sig.signature, {
+              commitment: "confirmed",
+              maxSupportedTransactionVersion: 0,
+            });
+            if (!parsed || !parsed.meta || parsed.meta.err) continue;
+            const logMessages = parsed.meta.logMessages || [];
+            const hasMemo = logMessages.some((log) => log.includes("backlot_vote") && log.includes(pollId));
+            if (!hasMemo) continue;
+
+            await fetch(`${siteUrl}/api/vote`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ pollId, optionId, txSignature: sig.signature }),
+            });
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Blink vote poll error:", err);
+      }
+    };
+
+    // Keep serverless function alive after response to poll for TX confirmation
+    waitUntil(pollForConfirmation());
+
     return NextResponse.json(
       {
         transaction: serialized,
