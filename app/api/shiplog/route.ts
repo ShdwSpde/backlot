@@ -11,6 +11,14 @@ interface ShipEntry {
 }
 
 const SHIP_LOG: ShipEntry[] = [
+  // Feb 26, 2026 — Vote fee + security hardening
+  { hash: "826934b", message: "feat: 10 $BACKLOT vote fee — SPL transfer to treasury on every vote", date: "2026-02-26", type: "feat", tags: ["solana", "voting", "treasury"] },
+  { hash: "826934b", message: "sec: server-side TX verification — /api/vote validates on-chain before recording", date: "2026-02-26", type: "sec", tags: ["security", "solana", "voting"] },
+  { hash: "826934b", message: "sec: Supabase RLS enabled — client anon key restricted to read-only", date: "2026-02-26", type: "sec", tags: ["security", "supabase"] },
+  { hash: "826934b", message: "fix: Token-2022 program ID — balance detection and ATA derivation corrected", date: "2026-02-26", type: "fix", tags: ["solana", "spl-token"] },
+  { hash: "826934b", message: "feat: Blink share buttons — Copy URL + Share on X for is_blink polls", date: "2026-02-26", type: "feat", tags: ["ui", "blinks", "twitter"] },
+  { hash: "6db4ab8", message: "sec: RPC proxy — Helius API key no longer exposed in client bundle", date: "2026-02-26", type: "sec", tags: ["security", "solana", "infra"] },
+  { hash: "826934b", message: "fix: treasury ATA auto-creation — idempotent instruction on first vote", date: "2026-02-26", type: "fix", tags: ["solana", "spl-token"] },
   // Feb 24, 2026 — Owner notes + episodes restructure
   { hash: "a887d1d", message: "feat: About link in footer — points to GitHub wiki", date: "2026-02-24", type: "feat", tags: ["ui", "transparency"] },
   { hash: "b560377", message: "feat: Now Casting CTA links to Google Form for founder submissions", date: "2026-02-24", type: "feat", tags: ["ui", "content"] },
