@@ -5,9 +5,26 @@ import {
   Transaction,
   TransactionInstruction,
 } from "@solana/web3.js";
+import {
+  createTransferInstruction,
+  createAssociatedTokenAccountIdempotentInstruction,
+  getAssociatedTokenAddressSync,
+  TOKEN_2022_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 import { ACTIONS_CORS_HEADERS, SITE_URL } from "@/lib/actions";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { getBacklotBalance } from "@/lib/wallet";
+
+const BACKLOT_MINT = new PublicKey(
+  (process.env.NEXT_PUBLIC_BACKLOT_TOKEN_MINT || "DSL6XbjPfhXjD9YYhzxo5Dv2VRt7VSeXRkTefEu5pump").trim()
+);
+const TREASURY_WALLET = new PublicKey(
+  (process.env.TREASURY_WALLET || "H3HQzT6PqyFWzQLAtexP98FWsY4cUJjBHUSKDbec93Bt").trim()
+);
+const VOTE_COST = 10;
+const TOKEN_DECIMALS = 6;
+const VOTE_COST_RAW = VOTE_COST * 10 ** TOKEN_DECIMALS;
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -18,16 +35,6 @@ function isValidPublicKey(value: string): boolean {
   } catch {
     return false;
   }
-}
-
-function getTierFromBalance(balance: number): string {
-  const EXEC = Number(process.env.NEXT_PUBLIC_EXEC_PRODUCER_THRESHOLD || 100000);
-  const PRODUCER = Number(process.env.NEXT_PUBLIC_PRODUCER_THRESHOLD || 10000);
-  const SUPPORTER = Number(process.env.NEXT_PUBLIC_SUPPORTER_THRESHOLD || 1);
-  if (balance >= EXEC) return "executive_producer";
-  if (balance >= PRODUCER) return "producer";
-  if (balance >= SUPPORTER) return "supporter";
-  return "viewer";
 }
 
 // GET — return action metadata + poll options as linked actions
@@ -65,7 +72,7 @@ export async function GET(req: NextRequest) {
     {
       icon: `${SITE_URL}/brand/banner.jpeg`,
       title: `BACKLOT Vote: ${poll.title}`,
-      description: poll.description || "Vote on what happens next in the Backlot experiment.",
+      description: (poll.description || "Vote on what happens next in the Backlot experiment.") + ` (Cost: ${VOTE_COST} $BACKLOT)`,
       label: "Vote",
       links: { actions },
     },
@@ -132,12 +139,22 @@ export async function POST(req: NextRequest) {
       .eq("id", pollId)
       .single();
 
-    // Get actual on-chain balance for tier
+    // Get actual on-chain balance to check vote eligibility
     const connection = new Connection(
-      process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com"
+      (process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com").trim()
     );
     const balance = await getBacklotBalance(connection, account);
-    const tier = getTierFromBalance(balance);
+
+    if (balance < VOTE_COST) {
+      return NextResponse.json(
+        { error: `Insufficient $BACKLOT balance (need ${VOTE_COST}, have ${balance})` },
+        { status: 400, headers: ACTIONS_CORS_HEADERS }
+      );
+    }
+
+    // Derive ATAs for SPL transfer
+    const voterATA = getAssociatedTokenAddressSync(BACKLOT_MINT, account, false, TOKEN_2022_PROGRAM_ID);
+    const treasuryATA = getAssociatedTokenAddressSync(BACKLOT_MINT, TREASURY_WALLET, false, TOKEN_2022_PROGRAM_ID);
 
     const memoText = JSON.stringify({
       type: "backlot_vote",
@@ -155,6 +172,20 @@ export async function POST(req: NextRequest) {
     const tx = new Transaction();
     tx.recentBlockhash = blockhash;
     tx.feePayer = account;
+
+    // Ensure treasury ATA exists (idempotent — no-op if already created)
+    tx.add(
+      createAssociatedTokenAccountIdempotentInstruction(
+        account, treasuryATA, TREASURY_WALLET, BACKLOT_MINT, TOKEN_2022_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID
+      )
+    );
+
+    // SPL token transfer: 10 $BACKLOT → treasury
+    tx.add(
+      createTransferInstruction(voterATA, treasuryATA, account, VOTE_COST_RAW, [], TOKEN_2022_PROGRAM_ID)
+    );
+
+    // Memo instruction for on-chain vote record
     tx.add(
       new TransactionInstruction({
         programId: MEMO_PROGRAM_ID,
@@ -165,46 +196,11 @@ export async function POST(req: NextRequest) {
 
     const serialized = tx.serialize({ requireAllSignatures: false }).toString("base64");
 
-    // Insert vote as pending — should be confirmed after tx lands on-chain
-    const { data: vote } = await supabaseAdmin
-      .from("votes")
-      .insert({
-        poll_id: pollId,
-        option_id: optionId,
-        wallet_address: walletAddr,
-        tier_at_vote: tier,
-        weight: Math.max(balance, 1),
-      })
-      .select()
-      .single();
-
-    if (vote) {
-      // Try atomic increment via RPC, fall back to read-then-write
-      const { error: rpcError } = await supabaseAdmin.rpc("increment_vote_count", { option_id_param: optionId });
-      if (rpcError) {
-        const { data: current } = await supabaseAdmin
-          .from("poll_options")
-          .select("vote_count")
-          .eq("id", optionId)
-          .single();
-        await supabaseAdmin
-          .from("poll_options")
-          .update({ vote_count: (current?.vote_count || 0) + 1 })
-          .eq("id", optionId);
-      }
-
-      await supabaseAdmin.from("vote_receipts").insert({
-        vote_id: vote.id,
-        wallet_address: walletAddr,
-        poll_title: poll?.title || "",
-        option_label: option?.label || "",
-      });
-    }
-
+    // Return TX only — vote is recorded after on-chain confirmation via /api/vote
     return NextResponse.json(
       {
         transaction: serialized,
-        message: `Voted: ${option?.label || "recorded"} on "${poll?.title || "poll"}"`,
+        message: `Vote: ${option?.label || "recorded"} on "${poll?.title || "poll"}" (10 $BACKLOT fee)`,
       },
       { headers: ACTIONS_CORS_HEADERS }
     );

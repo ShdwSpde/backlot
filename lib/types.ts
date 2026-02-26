@@ -20,6 +20,7 @@ export interface Poll {
   starts_at: string | null;
   ends_at: string | null;
   is_active: boolean;
+  is_blink: boolean;
   created_at: string;
   options?: PollOption[];
 }
