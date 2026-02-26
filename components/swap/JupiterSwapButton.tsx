@@ -33,7 +33,7 @@ export default function JupiterSwapButton({
     if (!window.Jupiter || !loaded) return;
     window.Jupiter.init({
       displayMode: "modal",
-      endpoint: process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com",
+      endpoint: `${process.env.NEXT_PUBLIC_SITE_URL || "https://backlotsocial.xyz"}/api/rpc`,
       formProps: {
         initialInputMint: SOL_MINT,
         initialOutputMint: BACKLOT_MINT,

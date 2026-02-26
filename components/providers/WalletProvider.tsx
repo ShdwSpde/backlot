@@ -12,7 +12,8 @@ import type { WalletError, Adapter } from "@solana/wallet-adapter-base";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
 export default function WalletProvider({ children }: { children: ReactNode }) {
-  const endpoint = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://backlotsocial.xyz";
+  const endpoint = `${siteUrl}/api/rpc`;
 
   const wallets = useMemo(
     () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
