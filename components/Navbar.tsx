@@ -7,7 +7,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useBacklotTier } from "@/hooks/useBacklotTier";
 import TierBadge from "./TierBadge";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const links = [
   { href: "/", label: "Home" },
@@ -25,6 +25,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const { tier, connected } = useBacklotTier();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   return (
     <nav className="sticky top-0 z-40 border-b border-white/5 bg-backlot-bg/80 backdrop-blur-xl">
@@ -54,8 +56,8 @@ export default function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          {connected && <TierBadge tier={tier} />}
-          <WalletMultiButton className="!bg-backlot-lavender/20 !text-backlot-lavender hover:!bg-backlot-lavender/30 !rounded-lg !h-9 !text-sm" />
+          {mounted && connected && <TierBadge tier={tier} />}
+          {mounted && <WalletMultiButton className="!bg-backlot-lavender/20 !text-backlot-lavender hover:!bg-backlot-lavender/30 !rounded-lg !h-9 !text-sm" />}
         </div>
 
         <button className="md:hidden text-backlot-muted" onClick={() => setMobileOpen(!mobileOpen)}>
