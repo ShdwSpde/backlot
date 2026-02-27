@@ -79,11 +79,14 @@ export async function GET() {
       }
     }
 
+    const priceChange24h = pair?.priceChange?.h24 ? parseFloat(pair.priceChange.h24) : 0;
+
     return NextResponse.json({
       price: tokenPrice,
       marketCap,
       holders,
       supply,
+      priceChange24h,
       lastUpdated: new Date().toISOString(),
     });
   } catch (error) {

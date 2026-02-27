@@ -11,6 +11,11 @@ interface ShipEntry {
 }
 
 const SHIP_LOG: ShipEntry[] = [
+  // Feb 26, 2026 — Hackathon polish: governance dashboard + charts + price ticker
+  { hash: "gov001a", message: "feat: governance dashboard — voting power, participation stats, vote history table, cNFT gallery", date: "2026-02-26", type: "feat", tags: ["ui", "voting", "governance"] },
+  { hash: "gov001b", message: "feat: animated vote result charts — framer-motion horizontal bar chart replaces text results", date: "2026-02-26", type: "feat", tags: ["ui", "framer-motion", "voting"] },
+  { hash: "gov001c", message: "feat: live price ticker in navbar — $BACKLOT price + 24h change from DexScreener", date: "2026-02-26", type: "feat", tags: ["ui", "dexscreener", "tokenomics"] },
+  { hash: "gov001d", message: "feat: priceChange24h added to /api/token-stats — DexScreener 24h delta", date: "2026-02-26", type: "feat", tags: ["api", "dexscreener"] },
   // Feb 26, 2026 — Time-weighted voting + diamond hands
   { hash: "aaff4bd", message: "feat: time-weighted voting — holding duration multiplies vote weight up to 4x", date: "2026-02-26", type: "feat", tags: ["solana", "voting", "tokenomics"] },
   { hash: "aaff4bd", message: "feat: Diamond Hands badge — tiered badge for long-term holders in navbar + polls", date: "2026-02-26", type: "feat", tags: ["ui", "solana", "gamification"] },

@@ -20,6 +20,7 @@ const links = [
   { href: "/changelog", label: "Ship Log" },
   { href: "/pitch", label: "Pitch" },
   { href: "/tech-chat", label: "Chat" },
+  { href: "/governance", label: "Gov" },
 ];
 
 export default function Navbar() {

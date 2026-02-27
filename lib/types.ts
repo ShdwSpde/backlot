@@ -31,6 +31,7 @@ export interface PollOption {
   label: string;
   description: string | null;
   vote_count: number;
+  weighted_count?: number;
 }
 
 export interface Vote {

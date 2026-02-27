@@ -10,7 +10,8 @@ import { useBacklotTier } from "@/hooks/useBacklotTier";
 import type { Poll, PollOption, Tier } from "@/lib/types";
 import TierBadge from "@/components/TierBadge";
 import DiamondHandsBadge from "@/components/DiamondHandsBadge";
-import { Check, Link2, Twitter } from "lucide-react";
+import { Link2, Twitter } from "lucide-react";
+import VoteChart from "@/components/vote/VoteChart";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.backlotsocial.xyz";
 
@@ -34,7 +35,7 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
   const [copied, setCopied] = useState(false);
   const blinkUrl = `${SITE_URL}/api/actions/vote?pollId=${poll.id}`;
   const totalVotes = options.reduce((sum, o) => sum + o.vote_count, 0);
-  const totalWeighted = options.reduce((sum, o) => sum + ((o as PollOption & { weighted_count?: number }).weighted_count || o.vote_count), 0);
+  const totalWeighted = options.reduce((sum, o) => sum + (o.weighted_count || o.vote_count), 0);
   const hasSufficientBalance = balance >= VOTE_COST;
   const pollExpired = poll.ends_at ? new Date(poll.ends_at) < new Date() : false;
   const pollInactive = !poll.is_active || pollExpired;
@@ -113,20 +114,18 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
         <TierBadge tier={poll.tier_required as Tier} />
       </div>
       <div className="mt-6 space-y-3">
-        {options.map((option) => {
-          const pct = totalWeighted > 0 ? (((option as PollOption & { weighted_count?: number }).weighted_count || option.vote_count) / totalWeighted) * 100 : 0;
-          const isVoted = votedOptionId === option.id;
-          return (
-            <button key={option.id} onClick={() => handleVote(option.id)} disabled={!canVote || !!votedOptionId || voting || confirming} className={`relative w-full overflow-hidden rounded-lg border p-3 text-left transition ${isVoted ? "border-backlot-gold/40 bg-backlot-gold/5" : votedOptionId ? "border-white/5 bg-white/5" : "border-white/10 bg-white/5 hover:border-backlot-lavender/30"}`}>
-              {votedOptionId && <motion.div className="absolute inset-y-0 left-0 bg-backlot-lavender/10" initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.5, ease: "easeOut" }} />}
+        {votedOptionId ? (
+          <VoteChart options={options} votedOptionId={votedOptionId} />
+        ) : (
+          options.map((option) => (
+            <button key={option.id} onClick={() => handleVote(option.id)} disabled={!canVote || !!votedOptionId || voting || confirming} className="relative w-full overflow-hidden rounded-lg border border-white/10 bg-white/5 p-3 text-left transition hover:border-backlot-lavender/30">
               <div className="relative flex items-center justify-between">
-                <div className="flex items-center gap-2">{isVoted && <Check size={14} className="text-backlot-gold" />}<span className="text-sm text-backlot-text">{option.label}</span></div>
-                {votedOptionId && <span className="text-xs text-backlot-muted">{option.vote_count} ({pct.toFixed(0)}%)</span>}
+                <span className="text-sm text-backlot-text">{option.label}</span>
               </div>
               {option.description && <p className="relative mt-1 text-xs text-backlot-muted">{option.description}</p>}
             </button>
-          );
-        })}
+          ))
+        )}
       </div>
       {poll.is_blink && (
         <div className="mt-4 flex items-center gap-2">

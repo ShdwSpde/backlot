@@ -4,6 +4,7 @@ import WalletProvider from "@/components/providers/WalletProvider";
 import AppShell from "@/components/AppShell";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import PriceTicker from "@/components/PriceTicker";
 
 export const metadata: Metadata = {
   title: "BACKLOT — Onchain Reality Docu-Series",
@@ -41,7 +42,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Navbar />
             <main className="min-h-[calc(100vh-4rem)]">{children}</main>
             <Footer />
+            <div className="h-16" />
           </AppShell>
+          <PriceTicker />
         </WalletProvider>
         <script
           dangerouslySetInnerHTML={{

@@ -165,6 +165,82 @@ export default function PitchPage() {
         </div>
       </section>
 
+      {/* Tokenomics */}
+      <section className="mx-auto max-w-5xl px-4 py-16">
+        <motion.div {...fadeUp} className="text-center">
+          <h2 className="font-serif text-3xl text-backlot-text md:text-4xl">Tokenomics</h2>
+          <p className="mx-auto mt-3 max-w-xl text-backlot-muted">$BACKLOT isn&apos;t just a token — it&apos;s your ticket to produce, vote, and shape the story. Every action has weight.</p>
+        </motion.div>
+
+        <div className="mt-12 grid gap-6 md:grid-cols-2">
+          {/* Tier System */}
+          <motion.div {...fadeUp} className="rounded-2xl border border-white/5 bg-backlot-surface p-6">
+            <h3 className="text-xs font-medium uppercase tracking-wider text-backlot-lavender">Holder Tiers</h3>
+            <p className="mt-2 text-sm text-backlot-muted">Your balance determines your access level. More tokens, more influence.</p>
+            <div className="mt-5 space-y-3">
+              {[
+                { tier: "Viewer", range: "0 tokens", desc: "Browse episodes and watch livestreams", color: "text-backlot-muted", border: "border-white/5" },
+                { tier: "Supporter", range: "1+ tokens", desc: "Vote on polls, access backstage content, appear on leaderboard", color: "text-backlot-lavender", border: "border-backlot-lavender/20" },
+                { tier: "Producer", range: "10K+ tokens", desc: "Vote on project-level decisions, higher voting weight", color: "text-backlot-gold", border: "border-backlot-gold/20" },
+                { tier: "Executive Producer", range: "100K+ tokens", desc: "Full governance access, milestone funding votes, top-tier badge", color: "text-backlot-tropical", border: "border-backlot-tropical/20" },
+              ].map((t) => (
+                <div key={t.tier} className={`flex items-start gap-3 rounded-lg border ${t.border} bg-white/[0.02] p-3`}>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className={`text-sm font-medium ${t.color}`}>{t.tier}</span>
+                      <span className="text-xs text-backlot-muted">{t.range}</span>
+                    </div>
+                    <p className="mt-0.5 text-xs text-backlot-muted">{t.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Burn + Diamond Hands */}
+          <div className="space-y-6">
+            <motion.div {...fadeUp} className="rounded-2xl border border-red-400/10 bg-red-400/5 p-6">
+              <h3 className="text-xs font-medium uppercase tracking-wider text-red-400">Deflationary Burns</h3>
+              <p className="mt-2 text-sm text-backlot-muted">Every vote costs <span className="text-backlot-text font-medium">10 $BACKLOT</span> — permanently burned, not sent to any wallet. Voting literally reduces supply, making every remaining token more scarce.</p>
+              <div className="mt-4 flex items-center gap-3 rounded-lg border border-white/5 bg-backlot-bg/50 px-4 py-3">
+                <span className="text-2xl">🔥</span>
+                <div>
+                  <p className="text-sm font-medium text-backlot-text">Vote = Burn</p>
+                  <p className="text-xs text-backlot-muted">10 tokens removed from total supply per vote</p>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div {...fadeUp} className="rounded-2xl border border-cyan-400/10 bg-cyan-400/5 p-6">
+              <h3 className="text-xs font-medium uppercase tracking-wider text-cyan-300">Diamond Hands Multiplier</h3>
+              <p className="mt-2 text-sm text-backlot-muted">The longer you hold, the louder your voice. Your vote weight multiplies based on how long you&apos;ve held $BACKLOT — up to <span className="text-backlot-text font-medium">4x</span> at 90+ days.</p>
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                {[
+                  { days: "0–29 days", mult: "1.0x", label: "New Holder" },
+                  { days: "30–59 days", mult: "2.0x", label: "Steady Holder" },
+                  { days: "60–89 days", mult: "3.0x", label: "Strong Holder" },
+                  { days: "90+ days", mult: "4.0x", label: "Diamond Hands 💎" },
+                ].map((m) => (
+                  <div key={m.days} className="rounded-lg border border-white/5 bg-backlot-bg/50 px-3 py-2 text-center">
+                    <p className="text-lg font-medium text-backlot-text">{m.mult}</p>
+                    <p className="text-[10px] text-backlot-muted">{m.days}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Voting Power Formula */}
+        <motion.div {...fadeUp} className="mt-6 rounded-2xl border border-backlot-gold/15 bg-backlot-gold/5 p-6 text-center">
+          <p className="text-xs uppercase tracking-wider text-backlot-gold">Voting Power Formula</p>
+          <p className="mt-3 font-mono text-lg text-backlot-text md:text-xl">
+            <span className="text-backlot-lavender">voting_power</span> = <span className="text-backlot-gold">balance</span> &times; <span className="text-cyan-300">holding_multiplier</span>
+          </p>
+          <p className="mt-2 text-sm text-backlot-muted">A holder with 50K tokens held for 90 days has <span className="text-backlot-text font-medium">200K voting power</span> — 4x more influence than a day-one flipper with the same bag.</p>
+        </motion.div>
+      </section>
+
       {/* Scaling Roadmap */}
       <section className="mx-auto max-w-5xl px-4 py-16">
         <motion.div {...fadeUp} className="text-center">

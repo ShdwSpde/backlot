@@ -46,7 +46,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-white/5 pt-6 text-center text-xs text-backlot-muted">
+        <div className="mt-8 border-t border-white/5 pt-6 pb-4 text-center text-xs text-backlot-muted">
           &copy; {new Date().getFullYear()} Backlot. The Social Experiment.
         </div>
       </div>
