@@ -7,12 +7,12 @@ import {
 } from "@metaplex-foundation/umi";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
-const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET || "";
+const INTERNAL_SECRET = process.env.INTERNAL_API_SECRET;
 
 export async function POST(req: NextRequest) {
   try {
-    // Only allow calls from our own server (vote handler)
-    if (INTERNAL_SECRET && req.headers.get("x-internal-secret") !== INTERNAL_SECRET) {
+    // Only allow calls from our own server (vote handler) — fail-closed
+    if (!INTERNAL_SECRET || req.headers.get("x-internal-secret") !== INTERNAL_SECRET) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

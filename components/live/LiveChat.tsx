@@ -26,10 +26,15 @@ export default function LiveChat() {
 
   const sendMessage = async () => {
     if (!input.trim() || !connected || !publicKey || tier === "viewer") return;
+    if (input.length > 500) return;
     setSending(true);
-    const walletAddr = publicKey.toBase58();
-    const shortAddr = `${walletAddr.slice(0, 4)}...${walletAddr.slice(-4)}`;
-    await supabase.from("chat_messages").insert({ wallet_address: walletAddr, display_name: shortAddr, message: input.trim(), tier, is_highlighted: tier === "producer" || tier === "executive_producer" });
+    try {
+      await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ walletAddress: publicKey.toBase58(), message: input.trim() }),
+      });
+    } catch { /* silent */ }
     setInput("");
     setSending(false);
   };

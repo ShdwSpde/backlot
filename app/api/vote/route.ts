@@ -114,6 +114,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Already voted on this poll" }, { status: 409 });
     }
 
+    // Prevent TX signature replay across polls
+    const { data: existingTx } = await supabaseAdmin
+      .from("votes")
+      .select("id")
+      .eq("tx_signature", txSignature)
+      .maybeSingle();
+
+    if (existingTx) {
+      return NextResponse.json({ error: "Transaction signature already used" }, { status: 409 });
+    }
+
     // Verify option belongs to poll
     const { data: option } = await supabaseAdmin
       .from("poll_options")
@@ -157,6 +168,7 @@ export async function POST(req: NextRequest) {
         tier_at_vote: tier,
         weight,
         holding_multiplier: Math.round(multiplier * 100) / 100,
+        tx_signature: txSignature,
       })
       .select()
       .single();

@@ -8,9 +8,9 @@ export async function GET(req: NextRequest) {
 
   // Fetch all data in 3 queries instead of N+1
   const [votesRes, chatsRes, receiptsRes] = await Promise.all([
-    supabaseAdmin.from("votes").select("wallet_address, poll_id"),
-    supabaseAdmin.from("chat_messages").select("wallet_address"),
-    supabaseAdmin.from("vote_receipts").select("wallet_address"),
+    supabaseAdmin.from("votes").select("wallet_address, poll_id").limit(5000),
+    supabaseAdmin.from("chat_messages").select("wallet_address").limit(5000),
+    supabaseAdmin.from("vote_receipts").select("wallet_address").limit(5000),
   ]);
 
   const votes = votesRes.data || [];

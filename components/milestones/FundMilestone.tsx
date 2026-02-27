@@ -5,8 +5,6 @@ import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { Transaction } from "@solana/web3.js";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, CheckCircle, Loader2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-
 const AMOUNTS = [0.01, 0.05, 0.1, 0.5];
 
 export default function FundMilestone({
@@ -46,27 +44,21 @@ export default function FundMilestone({
       const signature = await sendTransaction(tx, connection);
       await connection.confirmTransaction(signature, "confirmed");
 
-      await supabase.from("milestone_contributions").insert({
-        milestone_id: milestoneId,
-        wallet_address: publicKey.toBase58(),
-        amount: selectedAmount,
-        currency: "SOL",
-        tx_signature: signature,
+      // Verify and record server-side
+      const confirmRes = await fetch("/api/fund-milestone/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          milestoneId,
+          txSignature: signature,
+          amount: selectedAmount,
+          walletAddress: publicKey.toBase58(),
+        }),
       });
 
-      const { data: milestone } = await supabase
-        .from("milestones")
-        .select("current_amount")
-        .eq("id", milestoneId)
-        .single();
-
-      if (milestone) {
-        await supabase
-          .from("milestones")
-          .update({
-            current_amount: (milestone.current_amount || 0) + selectedAmount,
-          })
-          .eq("id", milestoneId);
+      if (!confirmRes.ok) {
+        const err = await confirmRes.json();
+        console.error("Fund confirmation failed:", err.error);
       }
 
       setStatus("done");
