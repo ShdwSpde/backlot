@@ -11,6 +11,14 @@ interface ShipEntry {
 }
 
 const SHIP_LOG: ShipEntry[] = [
+  // Feb 27, 2026 — Security audit + hardening
+  { hash: "a4cb821", message: "sec: RPC proxy method whitelist — blocks arbitrary JSON-RPC calls, only 18 safe methods allowed", date: "2026-02-27", type: "sec", tags: ["security", "solana", "infra"] },
+  { hash: "a4cb821", message: "sec: chat moved server-side — /api/chat with on-chain tier verification and 500-char limit", date: "2026-02-27", type: "sec", tags: ["security", "supabase", "api"] },
+  { hash: "a4cb821", message: "sec: milestone funding verified on-chain — /api/fund-milestone/confirm checks SOL transfer before recording", date: "2026-02-27", type: "sec", tags: ["security", "solana", "api"] },
+  { hash: "a4cb821", message: "sec: removed Helius API key from client bundle — NEXT_PUBLIC_SOLANA_RPC_URL eliminated", date: "2026-02-27", type: "sec", tags: ["security", "solana", "infra"] },
+  { hash: "a4cb821", message: "sec: TX signature replay protection — votes store and enforce unique tx_signature", date: "2026-02-27", type: "sec", tags: ["security", "voting", "solana"] },
+  { hash: "a4cb821", message: "sec: mint-receipt auth fail-closed — rejects all requests when INTERNAL_API_SECRET is unset", date: "2026-02-27", type: "sec", tags: ["security", "api"] },
+  { hash: "a4cb821", message: "sec: Content-Security-Policy header added — restricts scripts, styles, connects, and frames", date: "2026-02-27", type: "sec", tags: ["security", "infra"] },
   // Feb 26, 2026 — Hackathon polish: governance dashboard + charts + price ticker
   { hash: "gov001a", message: "feat: governance dashboard — voting power, participation stats, vote history table, cNFT gallery", date: "2026-02-26", type: "feat", tags: ["ui", "voting", "governance"] },
   { hash: "gov001b", message: "feat: animated vote result charts — framer-motion horizontal bar chart replaces text results", date: "2026-02-26", type: "feat", tags: ["ui", "framer-motion", "voting"] },
