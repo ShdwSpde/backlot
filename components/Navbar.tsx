@@ -31,7 +31,7 @@ export default function Navbar() {
   useEffect(() => { setMounted(true); }, []);
 
   return (
-    <nav className="sticky top-0 z-40 border-b border-white/5 bg-backlot-bg/80 backdrop-blur-xl">
+    <nav className="sticky top-0 z-40 glass border-b-0 bg-backlot-bg/60">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <Image src="/brand/logo.jpg" alt="BACKLOT" width={36} height={36} className="rounded-full" />

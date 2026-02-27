@@ -72,7 +72,7 @@ export default function MilestoneTracker({ projectName }: { projectName?: string
               <div className="absolute left-[19px] top-[40px] h-[calc(100%)] w-[2px] bg-white/5" />
             )}
 
-            <div className="flex gap-4 rounded-xl border border-white/5 bg-backlot-surface p-4">
+            <div className="flex gap-4 glass rounded-xl p-4">
               {/* Status dot */}
               <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border ${
                 milestone.status === "completed"

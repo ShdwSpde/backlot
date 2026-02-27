@@ -40,7 +40,7 @@ export default function LiveChat() {
   };
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-white/5 bg-backlot-surface">
+    <div className="flex h-full flex-col glass rounded-xl">
       <div className="border-b border-white/5 p-3"><div className="flex items-center justify-between"><h3 className="text-sm font-medium text-backlot-text">Live Chat</h3><span className="text-xs text-backlot-muted">{messages.length} messages</span></div></div>
       <div className="flex-1 overflow-y-auto p-3 space-y-2" style={{ maxHeight: "400px" }}>
         {messages.map((msg) => (

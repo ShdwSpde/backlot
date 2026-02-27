@@ -30,7 +30,7 @@ function StatCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay }}
-      className="rounded-xl border border-white/5 bg-backlot-surface p-4"
+      className="glass rounded-xl p-4"
     >
       <div className="flex items-center gap-2 text-backlot-muted">
         <Icon size={14} />

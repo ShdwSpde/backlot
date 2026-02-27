@@ -138,7 +138,7 @@ export default function PitchPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="rounded-xl border border-white/5 bg-backlot-surface p-5"
+              className="glass rounded-xl p-5"
             >
               <h3 className="text-xs font-medium uppercase tracking-wider text-backlot-lavender">{stack.layer}</h3>
               <ul className="mt-3 space-y-2">

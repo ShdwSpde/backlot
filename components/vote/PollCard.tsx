@@ -108,7 +108,7 @@ export default function PollCard({ poll }: { poll: Poll & { options: PollOption[
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-white/5 bg-backlot-surface p-6">
+    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass rounded-xl p-6">
       <div className="flex items-start justify-between">
         <div><span className="text-xs uppercase tracking-wider text-backlot-lavender">{poll.type}</span><h3 className="mt-1 font-serif text-xl text-backlot-text">{poll.title}</h3>{poll.description && <p className="mt-1 text-sm text-backlot-muted">{poll.description}</p>}</div>
         <TierBadge tier={poll.tier_required as Tier} />

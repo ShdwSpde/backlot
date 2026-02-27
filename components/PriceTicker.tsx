@@ -74,7 +74,7 @@ export default function PriceTicker() {
   );
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/5 bg-backlot-bg/90 backdrop-blur-sm overflow-hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-40 glass border-t-0 bg-backlot-bg/60 overflow-hidden">
       <div className="ticker-scroll flex items-center gap-0 py-3 text-sm">
         <div className="flex shrink-0 items-center gap-0 animate-marquee">{tickerContent}</div>
         <div className="flex shrink-0 items-center gap-0 animate-marquee" aria-hidden="true">{sep}{tickerContent}</div>

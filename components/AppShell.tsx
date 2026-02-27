@@ -6,6 +6,7 @@ import CRTIntro from "./CRTIntro";
 import CRTOverlay from "./CRTOverlay";
 import PageTransition from "./PageTransition";
 import Confetti from "./Confetti";
+import CursorGlow from "./CursorGlow";
 import { useWalletConfetti } from "@/hooks/useWalletConfetti";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -20,6 +21,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     <>
       {!introComplete && <CRTIntro onComplete={handleIntroComplete} />}
       <CRTOverlay />
+      <CursorGlow />
       <Confetti active={showConfetti} />
       <motion.div
         initial={{ opacity: 0 }}

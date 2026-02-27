@@ -78,13 +78,13 @@ export default function GovernancePage() {
       </motion.div>
 
       {!connected ? (
-        <motion.div {...fadeUp} className="mt-12 rounded-xl border border-white/5 bg-backlot-surface p-8 text-center">
+        <motion.div {...fadeUp} className="mt-12 glass rounded-xl p-8 text-center">
           <p className="text-backlot-muted">Connect your wallet to view your governance dashboard.</p>
         </motion.div>
       ) : (
         <div className="mt-8 space-y-6">
           {/* Voting Power Card */}
-          <motion.div {...fadeUp} className="rounded-xl border border-white/5 bg-backlot-surface p-6">
+          <motion.div {...fadeUp} className="glass rounded-xl p-6">
             <h2 className="text-xs uppercase tracking-wider text-backlot-lavender">Voting Power</h2>
             <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
               <div>
@@ -116,7 +116,7 @@ export default function GovernancePage() {
           </motion.div>
 
           {/* Active Polls Summary */}
-          <motion.div {...fadeUp} className="rounded-xl border border-white/5 bg-backlot-surface p-6">
+          <motion.div {...fadeUp} className="glass rounded-xl p-6">
             <h2 className="text-xs uppercase tracking-wider text-backlot-lavender">Participation</h2>
             <div className="mt-4 grid grid-cols-3 gap-4">
               <div>
@@ -141,7 +141,7 @@ export default function GovernancePage() {
           </motion.div>
 
           {/* Vote History Table */}
-          <motion.div {...fadeUp} className="rounded-xl border border-white/5 bg-backlot-surface p-6">
+          <motion.div {...fadeUp} className="glass rounded-xl p-6">
             <h2 className="text-xs uppercase tracking-wider text-backlot-lavender">Vote History</h2>
             {votes.length === 0 ? (
               <p className="mt-4 text-sm text-backlot-muted">No votes yet. Head to the Vote page to participate.</p>
