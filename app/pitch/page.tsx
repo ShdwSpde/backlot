@@ -180,9 +180,9 @@ export default function PitchPage() {
             <div className="mt-5 space-y-3">
               {[
                 { tier: "Viewer", range: "0 tokens", desc: "Browse episodes and watch livestreams", color: "text-backlot-muted", border: "border-white/5" },
-                { tier: "Supporter", range: "1+ tokens", desc: "Vote on polls, access backstage content, appear on leaderboard", color: "text-backlot-lavender", border: "border-backlot-lavender/20" },
-                { tier: "Producer", range: "10K+ tokens", desc: "Vote on project-level decisions, higher voting weight", color: "text-backlot-gold", border: "border-backlot-gold/20" },
-                { tier: "Executive Producer", range: "100K+ tokens", desc: "Full governance access, milestone funding votes, top-tier badge", color: "text-backlot-tropical", border: "border-backlot-tropical/20" },
+                { tier: "Supporter", range: "10+ tokens", desc: "Vote on polls, access backstage content, appear on leaderboard", color: "text-backlot-lavender", border: "border-backlot-lavender/20" },
+                { tier: "Producer", range: "100K+ tokens", desc: "Vote on project-level decisions, higher voting weight", color: "text-backlot-gold", border: "border-backlot-gold/20" },
+                { tier: "Executive Producer", range: "1M+ tokens", desc: "Full governance access, milestone funding votes, top-tier badge", color: "text-backlot-tropical", border: "border-backlot-tropical/20" },
               ].map((t) => (
                 <div key={t.tier} className={`flex items-start gap-3 rounded-lg border ${t.border} bg-white/[0.02] p-3`}>
                   <div className="min-w-0 flex-1">
