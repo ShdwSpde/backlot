@@ -11,6 +11,10 @@ interface ShipEntry {
 }
 
 const SHIP_LOG: ShipEntry[] = [
+  // Feb 27, 2026 — Visual polish + CSP fixes
+  { hash: "b524f0a", message: "feat: glassmorphism — frosted glass cards with backdrop-blur across navbar, footer, dashboard, polls, governance, chat", date: "2026-02-27", type: "feat", tags: ["ui", "design"] },
+  { hash: "b524f0a", message: "feat: cursor glow — lavender radial gradient follows mouse on desktop, hidden on touch", date: "2026-02-27", type: "feat", tags: ["ui", "design"] },
+  { hash: "csp002a", message: "fix: CSP allow pump.fun clip thumbnails and YouTube images on episodes page", date: "2026-02-27", type: "fix", tags: ["security", "infra"] },
   // Feb 27, 2026 — Security audit + hardening
   { hash: "a4cb821", message: "sec: RPC proxy method whitelist — blocks arbitrary JSON-RPC calls, only 18 safe methods allowed", date: "2026-02-27", type: "sec", tags: ["security", "solana", "infra"] },
   { hash: "a4cb821", message: "sec: chat moved server-side — /api/chat with on-chain tier verification and 500-char limit", date: "2026-02-27", type: "sec", tags: ["security", "supabase", "api"] },

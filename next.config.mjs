@@ -29,7 +29,7 @@ const nextConfig = {
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://platform.twitter.com https://cdn.jsdelivr.net",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https://*.supabase.co https://pbs.twimg.com https://*.twimg.com https://img.youtube.com https://*.ytimg.com",
+              "img-src 'self' data: blob: https://*.supabase.co https://pbs.twimg.com https://*.twimg.com https://img.youtube.com https://*.ytimg.com https://clips.pump.fun https://*.pump.fun",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.coingecko.com https://api.dexscreener.com https://*.helius-rpc.com https://api.mainnet-beta.solana.com",
               "frame-src 'self' https://platform.twitter.com https://pump.fun https://www.pump.fun https://terminal.jup.ag",
               "object-src 'none'",
