@@ -11,6 +11,15 @@ interface ShipEntry {
 }
 
 const SHIP_LOG: ShipEntry[] = [
+  // Feb 26, 2026 — Time-weighted voting + diamond hands
+  { hash: "aaff4bd", message: "feat: time-weighted voting — holding duration multiplies vote weight up to 4x", date: "2026-02-26", type: "feat", tags: ["solana", "voting", "tokenomics"] },
+  { hash: "aaff4bd", message: "feat: Diamond Hands badge — tiered badge for long-term holders in navbar + polls", date: "2026-02-26", type: "feat", tags: ["ui", "solana", "gamification"] },
+  { hash: "aaff4bd", message: "feat: on-chain holding duration lookup — paginated ATA signature history", date: "2026-02-26", type: "feat", tags: ["solana", "spl-token"] },
+  { hash: "3cbc845", message: "feat: burn vote tokens — 10 $BACKLOT permanently removed from supply per vote", date: "2026-02-26", type: "feat", tags: ["solana", "voting", "tokenomics"] },
+  { hash: "0b58b13", message: "fix: React hydration mismatch on WalletMultiButton — deferred client render", date: "2026-02-26", type: "fix", tags: ["ui", "solana"] },
+  { hash: "f1751eb", message: "fix: replace WebSocket TX confirmation with HTTP polling — RPC proxy compatible", date: "2026-02-26", type: "fix", tags: ["solana", "infra"] },
+  { hash: "6bac39b", message: "fix: redirect browsers visiting Blink URLs to /vote page", date: "2026-02-26", type: "fix", tags: ["blinks", "ux"] },
+  { hash: "45bb2a6", message: "fix: Blinks vote recording + www domain routing", date: "2026-02-26", type: "fix", tags: ["blinks", "infra"] },
   // Feb 26, 2026 — Vote fee + security hardening
   { hash: "826934b", message: "feat: 10 $BACKLOT vote fee — SPL transfer to treasury on every vote", date: "2026-02-26", type: "feat", tags: ["solana", "voting", "treasury"] },
   { hash: "826934b", message: "sec: server-side TX verification — /api/vote validates on-chain before recording", date: "2026-02-26", type: "sec", tags: ["security", "solana", "voting"] },

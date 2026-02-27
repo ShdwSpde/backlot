@@ -56,6 +56,8 @@ const TAG_COLORS: Record<string, string> = {
   realtime: "bg-emerald-400/20 text-emerald-400",
   transparency: "bg-backlot-gold/20 text-backlot-gold",
   middleware: "bg-amber-400/20 text-amber-400",
+  tokenomics: "bg-cyan-400/20 text-cyan-400",
+  gamification: "bg-violet-400/20 text-violet-400",
 };
 
 function getTagColor(tag: string): string {
