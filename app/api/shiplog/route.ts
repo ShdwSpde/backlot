@@ -19,6 +19,7 @@ const SHIP_LOG: ShipEntry[] = [
   { hash: "a4cb821", message: "sec: TX signature replay protection — votes store and enforce unique tx_signature", date: "2026-02-27", type: "sec", tags: ["security", "voting", "solana"] },
   { hash: "a4cb821", message: "sec: mint-receipt auth fail-closed — rejects all requests when INTERNAL_API_SECRET is unset", date: "2026-02-27", type: "sec", tags: ["security", "api"] },
   { hash: "a4cb821", message: "sec: Content-Security-Policy header added — restricts scripts, styles, connects, and frames", date: "2026-02-27", type: "sec", tags: ["security", "infra"] },
+  { hash: "203c51f", message: "fix: CSP blocking images/iframes — allow YouTube thumbnails, pump.fun frames, SAMEORIGIN framing", date: "2026-02-27", type: "fix", tags: ["security", "infra"] },
   // Feb 26, 2026 — Hackathon polish: governance dashboard + charts + price ticker
   { hash: "gov001a", message: "feat: governance dashboard — voting power, participation stats, vote history table, cNFT gallery", date: "2026-02-26", type: "feat", tags: ["ui", "voting", "governance"] },
   { hash: "gov001b", message: "feat: animated vote result charts — framer-motion horizontal bar chart replaces text results", date: "2026-02-26", type: "feat", tags: ["ui", "framer-motion", "voting"] },
